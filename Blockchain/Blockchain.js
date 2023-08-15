@@ -1,4 +1,5 @@
 const Block = require("./Block");
+// const Block = require("./Block");
 const crypto = require("../utilities/hash");
 
 class Blockchain {
@@ -6,8 +7,11 @@ class Blockchain {
     this.chain = [Block.genesis()];
   }
 
-  addBlock({ data }) {
-    const addedBlock = Block.mineBlock({ lastBlock: this.chain.at(-1), data });
+  addBlock({ transactions }) {
+    const addedBlock = Block.mineBlock({
+      lastBlock: this.chain.at(-1),
+      transactions,
+    });
     this.chain.push(addedBlock);
     return addedBlock;
   }
@@ -26,13 +30,19 @@ class Blockchain {
     }
 
     for (let i = 1; i < chain.length; i++) {
-      const { timestamp, data, hash, lastHash, nonce, difficulty } =
+      const { timestamp, transactions, hash, lastHash, nonce, difficulty } =
         chain.at(i);
       const prevHash = chain[i - 1].hash;
 
       if (lastHash !== prevHash) return false;
 
-      const validHash = crypto(timestamp, data, lastHash, nonce, difficulty);
+      const validHash = crypto(
+        timestamp,
+        transactions,
+        lastHash,
+        nonce,
+        difficulty
+      );
       if (hash !== validHash) return false;
     }
 
