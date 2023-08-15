@@ -2,15 +2,19 @@ const { v4: uuidv4 } = require("uuid");
 const { verifySignature } = require("../utilities");
 
 class Transaction {
-  constructor({ sender, recipient, amount }) {
+  constructor({ sender, recipient, amount, propertyId = null }) {
     this.id = uuidv4();
-    this.outputMap = this.createMap({ sender, recipient, amount });
+    this.outputMap = this.createMap({ sender, recipient, amount, propertyId });
     this.input = this.createInput({ sender, outputMap: this.outputMap });
   }
 
-  createMap({ sender, recipient, amount }) {
+  createMap({ sender, recipient, amount, propertyId }) {
     const map = {};
     map[recipient] = amount;
+
+    if (propertyId) {
+      map[sender].propertyId = propertyId;
+    }
     map[sender.publicKey] = sender.balance - amount;
     return map;
   }
