@@ -3,9 +3,9 @@ const crypto = require("../utilities/hash");
 const { GENESIS_DATA, MINE_RATE } = require("../utilities/config");
 
 class Block {
-  constructor({ timestamp, data, hash, lastHash, nonce, difficulty }) {
+  constructor({ timestamp, transactions, hash, lastHash, nonce, difficulty }) {
     this.timestamp = timestamp;
-    this.data = data;
+    this.transactions = transactions;
     this.hash = hash;
     this.lastHash = lastHash;
     this.nonce = nonce;
@@ -17,7 +17,7 @@ class Block {
     return new this(GENESIS_DATA);
   }
 
-  static mineBlock({ lastBlock, data }) {
+  static mineBlock({ lastBlock, transactions }) {
     let timestamp, hash;
     const lastHash = lastBlock.hash;
     let { difficulty } = lastBlock;
@@ -30,7 +30,7 @@ class Block {
         originalBlock: lastBlock,
         timestamp,
       });
-      hash = crypto(timestamp, lastHash, data, nonce, difficulty);
+      hash = crypto(timestamp, lastHash, transactions, nonce, difficulty);
     } while (
       hexToBinary(hash).substring(0, difficulty) !== "0".repeat(difficulty)
     );
@@ -38,7 +38,7 @@ class Block {
     return new this({
       timestamp,
       lastHash,
-      data,
+      transactions,
       difficulty,
       nonce,
       hash,
