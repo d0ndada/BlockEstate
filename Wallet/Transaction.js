@@ -33,7 +33,8 @@ class Transaction {
       outputMap,
     } = transaction;
     const total = Object.values(outputMap).reduce(
-      (total, amount) => total + amount
+      (total, amount) => total + amount,
+      0
     );
     if (amount !== total) {
       return false;
@@ -44,7 +45,7 @@ class Transaction {
     return true;
   }
 
-  update({ sender, recipient, amount }) {
+  update({ sender, recipient, amount, propertyId }) {
     if (amount > this.outputMap[sender.publicKey]) {
       throw new Error("Not enough funds");
     }
@@ -54,8 +55,10 @@ class Transaction {
     } else {
       this.outputMap[recipient] = this.outputMap[recipient] + amount;
     }
-    this.outputMap[sender.publicKey] =
-      this.outputMap[sender.publicKey] - amount;
+    if (propertyId) {
+      this.outputMap[recipient].propertyId = propertyId;
+    }
+    this.outputMap[sender.publicKey].amount -= amount;
 
     this.input = this.createInput({ sender, outputMap: this.outputMap });
   }
