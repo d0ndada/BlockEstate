@@ -1,16 +1,19 @@
 const Block = require("./Block");
 // const Block = require("./Block");
 const crypto = require("../utilities/hash");
+const TransactionPool = require("../Wallet/TransactionPool");
+const Transaction = require("../Wallet/Transaction");
 
 class Blockchain {
   constructor() {
     this.chain = [Block.genesis()];
+    this.transactionPool = new TransactionPool();
   }
 
   addBlock({ transactions }) {
     const addedBlock = Block.mineBlock({
       lastBlock: this.chain.at(-1),
-      transactions,
+      data: transactions,
     });
     this.chain.push(addedBlock);
     return addedBlock;
@@ -44,6 +47,12 @@ class Blockchain {
         difficulty
       );
       if (hash !== validHash) return false;
+
+      for (let transaction of transactions) {
+        if (!Transaction.validateTransaction(transaction)) {
+          return false;
+        }
+      }
     }
 
     return true;
