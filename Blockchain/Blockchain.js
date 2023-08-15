@@ -19,6 +19,30 @@ class Blockchain {
     return addedBlock;
   }
 
+  addTransaction(transaction) {
+    if (Transaction.validateTransaction(transaction)) {
+      if (
+        this.transactionPool.transactionExist({
+          address: transaction.input.address,
+        })
+      ) {
+        this.transactionPool.transactionMap[transaction.id] = transaction;
+      } else {
+        this.transactionPool.addTransaction(transaction);
+      }
+    } else {
+      throw new Error("Invalid transaction");
+    }
+  }
+
+  mineTransactions() {
+    const validTransactions = Object.values(
+      this.transactionPool.transactionMap
+    );
+    this.addBlock({ transactions: validTransactions });
+    this.transactionPool = new TransactionPool();
+  }
+
   replaceChain(chain) {
     if (chain.length <= this.chain.length) return;
 
