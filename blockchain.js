@@ -26,10 +26,11 @@ Blockchain.prototype.getLastBlock = function () {
 
 Blockchain.prototype.createListingTransaction = function (
   seller,
-  price,
-  propertyDetails
+  price
+  //   propertyDetails
 ) {
   const transaction = {
+    type: "listing",
     transactionId: uuidv4().split("-").join(""),
     propertyId: uuidv4().split("-").join(""),
     seller,
@@ -37,13 +38,32 @@ Blockchain.prototype.createListingTransaction = function (
     price,
     status: "For Sale",
     dateListed: Date.now(),
-    propertyDetails: {
-      address: propertyDetails.address,
-      size: propertyDetails.size,
-      bedrooms: propertyDetails.bedrooms,
-      bathrooms: propertyDetails.bathrooms,
-      description: propertyDetails.description,
-    },
+    // propertyDetails: {
+    //   address: propertyDetails.address,
+    //   size: propertyDetails.size,
+    //   bedrooms: propertyDetails.bedrooms,
+    //   bathrooms: propertyDetails.bathrooms,
+    //   description: propertyDetails.description,
+    // },
+  };
+  return transaction;
+};
+
+Blockchain.prototype.createPurchaseTransaction = function (
+  propertyId,
+  buyer,
+  price,
+  seller
+) {
+  const transaction = {
+    type: "purchase",
+    transactionId: uuidv4().split("-").join(""),
+    propertyId,
+    seller,
+    buyer,
+    price,
+    status: "Sold",
+    dateSold: Date.now(),
   };
   return transaction;
 };
