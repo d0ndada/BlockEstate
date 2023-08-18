@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require("uuid");
+
 function Blockchain() {
   this.chain = [];
   this.pendingList = [];
@@ -22,4 +24,26 @@ Blockchain.prototype.getLastBlock = function () {
   return this.chain.at(-1);
 };
 
-Blockchain.prototype.ad;
+Blockchain.prototype.createListingTransaction = function (
+  seller,
+  price,
+  propertyDetails
+) {
+  const transaction = {
+    transactionId: uuidv4().split("-").join(""),
+    propertyId: uuidv4().split("-").join(""),
+    seller,
+    buyer: null,
+    price,
+    status: "For Sale",
+    dateListed: Date.now(),
+    propertyDetails: {
+      address: propertyDetails.address,
+      size: propertyDetails.size,
+      bedrooms: propertyDetails.bedrooms,
+      bathrooms: propertyDetails.bathrooms,
+      description: propertyDetails.description,
+    },
+  };
+  return transaction;
+};
