@@ -67,3 +67,8 @@ Blockchain.prototype.createPurchaseTransaction = function (
   };
   return transaction;
 };
+
+Blockchain.prototype.addTransactionToPendingList = function (transaction) {
+  this.pendingList.push(transaction);
+  return this.getLastBlock()["index"] + 1;
+};
