@@ -1,0 +1,11 @@
+{
+  "name": "BlockEstate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/d0ndada/BlockEstate.git",
+  "author": "d0ndada <pintoavila09@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  }
+}
