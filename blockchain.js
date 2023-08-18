@@ -72,3 +72,9 @@ Blockchain.prototype.addTransactionToPendingList = function (transaction) {
   this.pendingList.push(transaction);
   return this.getLastBlock()["index"] + 1;
 };
+
+Blockchain.prototype.createHash = function (prevHash, data, nonce) {
+  const stringToHash = prevHash + JSON.stringify(data) + nonce.toString();
+  const hash = sha256(stringToHash);
+  return hash;
+};
