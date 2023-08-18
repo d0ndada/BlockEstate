@@ -6,6 +6,7 @@
   "author": "d0ndada <pintoavila09@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "sha256": "^0.2.0",
     "uuid": "^9.0.0"
   }
 }
