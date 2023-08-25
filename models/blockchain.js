@@ -3,6 +3,8 @@ const { v4: uuidv4 } = require("uuid");
 function Blockchain() {
   this.chain = [];
   this.pendingList = [];
+
+  this.createBlock(1, "Genisis", "Genisis");
 }
 
 Blockchain.prototype.createBlock = function (nonce, previousHash, hash) {
@@ -49,18 +51,37 @@ Blockchain.prototype.createListingTransaction = function (
   return transaction;
 };
 
-Blockchain.prototype.createPurchaseTransaction = function (
+Blockchain.prototype.createBidTransaction = function (
   propertyId,
-  buyer,
+  bidder,
   price,
   seller
 ) {
   const transaction = {
-    type: "purchase",
+    type: "Bid",
     transactionId: uuidv4().split("-").join(""),
     propertyId,
     seller,
-    buyer,
+    bidder,
+    price,
+    status: "For Sale",
+    dateSold: Date.now(),
+  };
+  return transaction;
+};
+
+Blockchain.prototype.acceptBidTransaction = function (
+  propertyId,
+  bidder,
+  price,
+  seller
+) {
+  const transaction = {
+    type: "acceptBid",
+    transactionId: uuidv4().split("-").join(""),
+    propertyId,
+    seller,
+    bidder,
     price,
     status: "Sold",
     dateSold: Date.now(),
