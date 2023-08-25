@@ -55,11 +55,7 @@ Blockchain.prototype.createListingTransaction = function (
   return transaction;
 };
 
-Blockchain.prototype.addCommission = function (
-  amount,
-  sender,
-  recipient = nodeAddress
-) {
+Blockchain.prototype.addCommission = function (amount, sender, recipient) {
   const commission = {
     amount,
     sender,
