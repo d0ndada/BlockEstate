@@ -1,5 +1,12 @@
+const { blockEstate } = require("../utilities/config");
+
 exports.createListing = (req, res) => {
-  res.status(200).json({ success: true, data: "created listing of house" });
+  const transaction = blockEstate.createListingTransaction(
+    req.body.seller,
+    req.body.price
+  );
+  const index = blockEstate.addTransactionToPendingList(transaction);
+  res.status(200).json({ success: true, data: `Block index: ${index}` });
 };
 
 exports.createBid = (req, res) => {
