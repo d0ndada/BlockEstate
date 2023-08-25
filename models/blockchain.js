@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
+const sha256 = require("sha256");
 
 function Blockchain() {
   this.chain = [];
@@ -64,13 +65,14 @@ Blockchain.prototype.createBidTransaction = function (
     seller,
     bidder,
     price,
-    status: "For Sale",
-    dateSold: Date.now(),
+    status: "Under Offer",
+    dateBid: Date.now(),
   };
   return transaction;
 };
 
 Blockchain.prototype.acceptBidTransaction = function (
+  transactionId,
   propertyId,
   bidder,
   price,
@@ -79,6 +81,7 @@ Blockchain.prototype.acceptBidTransaction = function (
   const transaction = {
     type: "acceptBid",
     transactionId: uuidv4().split("-").join(""),
+    bidTransactionId: transactionId,
     propertyId,
     seller,
     bidder,
@@ -104,9 +107,9 @@ Blockchain.prototype.proofOfWork = function (prevHash, data) {
   let nonce = 0;
   let hash = this.createHash(prevHash, data, nonce);
 
-  while (hash.substring(0, 4) != "0000") {
+  while (hash.substring(0, 4) !== "0000") {
     nonce++;
-    hahs = this.createHash(prevHash, data, nonce);
+    hash = this.createHash(prevHash, data, nonce);
   }
   return nonce;
 };
