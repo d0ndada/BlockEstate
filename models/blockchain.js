@@ -4,6 +4,8 @@ const sha256 = require("sha256");
 function Blockchain() {
   this.chain = [];
   this.pendingList = [];
+  this.nodeUrl = process.argv[3];
+  this.networkNodes = [];
 
   this.createBlock(1, "Genisis", "Genisis");
 }
