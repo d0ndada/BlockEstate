@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const sha256 = require("sha256");
+const { nodeAddress } = require("../utilities/config");
 
 function Blockchain() {
   this.chain = [];
@@ -54,6 +55,18 @@ Blockchain.prototype.createListingTransaction = function (
   return transaction;
 };
 
+Blockchain.prototype.addCommission = function (
+  amount,
+  sender,
+  recipient = nodeAddress
+) {
+  const commission = {
+    amount,
+    sender,
+    recipient,
+  };
+  return commission;
+};
 Blockchain.prototype.createBidTransaction = function (
   propertyId,
   bidder,
