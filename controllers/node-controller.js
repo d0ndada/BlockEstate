@@ -1,5 +1,6 @@
-const { axios } = require("axios");
+// const axios = require("axios");
 const { blockEstate } = require("../utilities/config");
+const fetch = require("node-fetch");
 
 exports.broadcastNode = async (req, res) => {
   const urlToAdd = req.body.nodeUrl;
@@ -8,12 +9,19 @@ exports.broadcastNode = async (req, res) => {
   }
   blockEstate.networkNodes.forEach(async (url) => {
     const body = { nodeUrl: urlToAdd };
-    await axios.post(`${url}/api/`, { body: body });
+    await fetch(`${url}/api/node/register-node`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
   });
-  const body = { node: [...blockEstate.networkNodes, blockEstate.nodeUrl] };
-  await axios.post(`${urlToAdd}/api/register-nodes`, {
-    body: body,
+  const body = { nodes: [...blockEstate.networkNodes, blockEstate.nodeUrl] };
+  await fetch(`${urlToAdd}/api/node/register-nodes`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: { "Content-Type": "application/json" },
   });
+
   res.status(201).json({
     success: true,
     data: `Node is broadcasted ${req.body.nodeUrl}`,

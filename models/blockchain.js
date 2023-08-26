@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
 const sha256 = require("sha256");
-const { nodeAddress } = require("../utilities/config");
 
 function Blockchain() {
   this.chain = [];

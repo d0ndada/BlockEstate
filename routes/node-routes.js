@@ -6,7 +6,7 @@ const {
   addNodes,
 } = require("../controllers/node-controller");
 
-router.route("/").post(broadcastNode);
+router.route("/broadcast").post(broadcastNode);
 router.route("/register-node").post(addNode);
 router.route("/register-nodes").post(addNodes);
 
