@@ -10,6 +10,13 @@ exports.createListing = (req, res) => {
 };
 
 exports.createBid = (req, res) => {
+  const bid = blockEstate.createBidTransaction(
+    req.body.propertyId,
+    req.body.bidder,
+    req.body.price,
+    req.body.seller
+  );
+  blockEstate.addTransactionToPendingList(bid);
   res.status(200).json({ success: true, data: "created bid of house" });
 };
 
