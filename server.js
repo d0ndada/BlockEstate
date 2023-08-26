@@ -48,7 +48,7 @@ app.post("/api/transaction/list", (req, res) => {
   res.status(200).json({ success: true, data: `Block index: ${index}` });
 });
 
-app.post("api/transaction/bid", (req, res) => {
+app.post("/api/transaction/bid", (req, res) => {
   const bid = blockEstate.createBidTransaction(
     req.body.propertyId,
     req.body.bidder,
@@ -196,25 +196,25 @@ app.post("/api/register-nodes", (req, res) => {
 
 // conecnsues endpoint
 
-app.get("api/consensus", (req, res) => {
+app.get("/api/consensus", (req, res) => {
   const currentChainLength = blockEstate.chain.length;
   let maxLength = currentChainLength;
   let longestChain = null;
   let pendingList = null;
 
-  blockEstate.networkNodes.forEach(async (node) => {
-    console.log("Node", node);
-    // Jämför med alla noer i nätverket antalet block i kedjan
-    // lagra blockkedjan som är längst och ersätt aktuell blockkedja med de nya blocken
-    // Hämta varje nodes (http://localhost:${node]/api/blockchain)
-    axios(`http://localhost:${node}/api/blockchain`).then((data) => {
+  // Iterera igenom alla noder i nätverket som finns upplagda på aktuell node...
+  blockEstate.networkNodes.forEach((node) => {
+    console.log("Node: ", node);
+
+    axios(`${node}/api/blockchain`).then((data) => {
       console.log("Data ifrån axios: ", data);
 
-      if (currentChainLength < data.data.data.chain.length) {
-        longestChain = data.data.data.chain;
-        maxLength = data.data.data.length;
-        pendingList = data.data.data.pendingList;
+      if (data.data.chain.length > maxLength) {
+        maxLength = data.data.chain.length;
+        longestChain = data.data.chain;
+        pendingList = data.data.pendingList;
       }
+
       if (
         !longestChain ||
         (longestChain && !blockEstate.validateChain(longestChain))
