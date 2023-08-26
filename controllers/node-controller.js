@@ -1,26 +1,34 @@
-// const axios = require("axios");
+const axios = require("axios");
 const { blockEstate } = require("../utilities/config");
-const fetch = require("node-fetch");
 
 exports.broadcastNode = async (req, res) => {
   const urlToAdd = req.body.nodeUrl;
   if (blockEstate.networkNodes.indexOf(urlToAdd) === -1) {
     blockEstate.networkNodes.push(urlToAdd);
   }
-  blockEstate.networkNodes.forEach(async (url) => {
+  for (const url of blockEstate.networkNodes) {
     const body = { nodeUrl: urlToAdd };
-    await fetch(`${url}/api/node/register-node`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    });
-  });
+    try {
+      await axios.post(`${url}/api/node/register-node`, body);
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        errorMessage: "failed to add nodeUrl",
+        data: body,
+      });
+    }
+  }
+
   const body = { nodes: [...blockEstate.networkNodes, blockEstate.nodeUrl] };
-  await fetch(`${urlToAdd}/api/node/register-nodes`, {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
+  try {
+    await axios.post(`${urlToAdd}/api/node/register-nodes`, body);
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      errorMessage: "failed to add other nodes",
+      data: body,
+    });
+  }
 
   res.status(201).json({
     success: true,
