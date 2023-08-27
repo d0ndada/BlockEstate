@@ -215,15 +215,26 @@ app.get("/api/consensus", (req, res) => {
         pendingList = data.data.pendingList;
       }
 
-      if (
-        !longestChain ||
-        (longestChain && !blockEstate.validateChain(longestChain))
-      ) {
-        console.log("No replacement needed");
+      if (!longestChain) {
+        return res.status(200).json({
+          success: true,
+          message: "Current chain is the longest.",
+        });
+      } else if (longestChain && !blockEstate.validateChain(longestChain)) {
+        return res
+          .status(200)
+          .json({
+            success: true,
+            message: "Found a longer chain, but it's not valid.",
+          });
       } else {
         blockEstate.chain = longestChain;
         blockEstate.pendingList = pendingList;
-        res.status(200).json({ success: true, data: blockEstate });
+        res.status(200).json({
+          success: true,
+          message: "Chain replaced with the longest valid chain.",
+          data: blockEstate,
+        });
       }
     });
   });
