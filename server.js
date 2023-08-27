@@ -340,7 +340,7 @@ app.use("/api/property/listed", (req, res) => {
     data: result,
   });
 });
-// not working
+// nworking
 app.get("/api/property/biddings", (req, res) => {
   const result = blockEstate.GetAllBids();
   if (!result) {
@@ -353,6 +353,66 @@ app.get("/api/property/biddings", (req, res) => {
   res.status(200).json({
     success: true,
     data: result,
+  });
+});
+
+// list an property that has been sold // not tested
+app.post("/api/property/relist", (req, res) => {
+  const { propertyId, seller, price } = req.body;
+  if (blockEstate.canRelistProperty(propertyId)) {
+    const relistTransaction = blockEstate.createRelistTransaction(
+      seller,
+      price,
+      propertyId
+    );
+    blockEstate.addTransactionToPendingList(relistTransaction);
+    if (!result) {
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: `Property cannot be relisted at this moment`,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: `Property relisted successfully`,
+
+      data: relistTransaction,
+    });
+  } else {
+    res.status(200).json({
+      success: false,
+      message: `Property cannot be relisted at this moment`,
+    });
+  }
+});
+
+// maybe date: listed, bids, sold or more
+
+// maybe add apartment details soon.
+
+// app.use("/api/blockEstate", blockchain);
+// app.use("/api/block", block);
+// app.use("/api/transaction", transaction);
+// app.use("/api/node", node);
+// app.use("/api/consensus", consensus);
+
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+// house get relisted fix that so it can be listed again
+
+app.get("/api/property/biddings/older", (req, res) => {
+  const result = blockEstate.GetAllBids();
+  const newresult = blockEstate.SortBids(result);
+  if (!result) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No bids found`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: newresult,
   });
 });
 
@@ -374,6 +434,7 @@ app.use("/api/property/listed/ascending", (req, res) => {
 });
 app.use("/api/property/listed/descending", (req, res) => {
   const result = blockEstate.GetAllListings();
+  const descending = blockEstate.SortDescending(result.listings);
   if (!result.listings) {
     return res.status(404).json({
       status: 404,
@@ -383,23 +444,6 @@ app.use("/api/property/listed/descending", (req, res) => {
   }
   res.status(200).json({
     success: true,
-    data: result,
+    data: descending,
   });
 });
-
-// maybe date: listed, bids, sold or more
-
-// maybe add apartment details soon.
-
-// app.use("/api/blockEstate", blockchain);
-// app.use("/api/block", block);
-// app.use("/api/transaction", transaction);
-// app.use("/api/node", node);
-// app.use("/api/consensus", consensus);
-
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-// find info about transactions with id
-// find bids on property
-// find properies for Sale
-// find properties sold
-// find active bids for all propertiesn

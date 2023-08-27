@@ -102,6 +102,24 @@ Blockchain.prototype.acceptBidTransaction = function (
   return transaction;
 };
 
+Blockchain.prototype.createRelistTransaction = function (
+  seller,
+  price,
+  propertyId
+) {
+  const relistTransaction = {
+    type: "Relist",
+    transactionId,
+    propertyId,
+    seller,
+    bidder: null,
+    price,
+    status: "For Sale",
+    dateListed: Date.now(),
+  };
+  return relistTransaction;
+};
+
 Blockchain.prototype.addTransactionToPendingList = function (transaction) {
   this.pendingList.push(transaction);
   return this.getLastBlock()["index"] + 1;
@@ -166,14 +184,20 @@ Blockchain.prototype.findStatus = function (propertyId) {
   this.chain.forEach((block) => {
     block.data.forEach((transaction) => {
       if (transaction.propertyId === propertyId) {
-        if (transaction.type === "AcceptBid") {
-          status = transaction.status;
-        }
+        // if (transaction.type === "AcceptBid") {
+        status = transaction.status;
+        // }
       }
     });
   });
 
   return { propertyId, status };
+};
+
+Blockchain.prototype.canRelistProperty = function (propertyId) {
+  const propertyStatus = this.findStatus(propertyId).status;
+
+  return propertyStatus === "Sold";
 };
 
 Blockchain.prototype.findTransaction = function (transactionId) {
@@ -292,6 +316,11 @@ Blockchain.prototype.GetAllBids = function () {
     });
   });
   return { bids: bids.length, block: bids };
+};
+
+Blockchain.prototype.SortDescending = function (e) {
+  const descending = e.sort((a, b) => a.data.data.price - b.data.data.price);
+  return descending;
 };
 
 module.exports = Blockchain;
