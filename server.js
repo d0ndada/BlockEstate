@@ -229,6 +229,34 @@ app.get("/api/consensus", (req, res) => {
   });
 });
 
+// need to test
+app.get("/api/property/:status", (req, res) => {
+  const search = blockEstate.findStatus(req.params.status);
+  res.status(200).json({ success: true, data: search });
+});
+// need to test
+app.get("/api/transaction/:id", (req, res) => {
+  const result = blockEstate.findTransaction(req.params.id);
+  if (!result) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `Did not find a transaction by id ${req.params.id}`,
+    });
+  }
+  res.status(200).json({ success: true, data: result });
+});
+// need to test
+app.get("/api/property/:id", (req, res) => {
+  const result = blockEstate.findProperty(req.params.propertyId);
+  res.status(200).json({ success: true, data: result });
+});
+
+app.get("/api/property/bids/:id", (req, res) => {
+  const result = blockEstate.findActiveBidsOnProperty(req.params.propertyId);
+  res.status(200).json({ success: true, data: result });
+});
+
 // app.use("/api/blockEstate", blockchain);
 // app.use("/api/block", block);
 // app.use("/api/transaction", transaction);
@@ -236,3 +264,8 @@ app.get("/api/consensus", (req, res) => {
 // app.use("/api/consensus", consensus);
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+// find info about transactions with id
+// find bids on property
+// find properies for Sale
+// find properties sold
+// find active bids for all propertiesn
