@@ -247,8 +247,10 @@ app.get("/api/transaction/:id", (req, res) => {
   res.status(200).json({ success: true, data: result });
 });
 // need to test
-app.get("/api/property/:id", (req, res) => {
+app.get("/api/property/id/:id", (req, res) => {
   const result = blockEstate.findProperty(req.params.id);
+  console.log("Result from findProperty:", result); // Log the result
+
   if (!result) {
     return res.status(404).json({
       status: 404,
@@ -256,6 +258,7 @@ app.get("/api/property/:id", (req, res) => {
       message: `Did not find property with id ${req.params.id}`,
     });
   }
+  console.log(result);
   res.status(200).json({ success: true, data: result });
 });
 
