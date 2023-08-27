@@ -192,22 +192,26 @@ Blockchain.prototype.findProperty = function (propertyId) {
 
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
   const bids = [];
+  const sold = [];
 
   this.chain.forEach((block) =>
     block.data.forEach((property) => {
-      if (property.type == "Bid" && property.propertyId == propertyId) {
-        bids.push(block);
+      if (property.propertyId == propertyId) {
+        if (property.type == "AcceptBid") {
+          sold.push(block);
+        } else if (property.type == "Bid") {
+          bids.push(block);
+        }
       }
     })
   );
   if (bids.length === 0) {
     return null;
   }
-  // else {
-  //   const property = block.data.filter(
-  //     (property) => property.propertyId === propertyId
-  //   );
-  return { bids };
+  if (sold.length === 0) {
+    sold.push("Not Sold");
+  }
+  return { propertyId, sold, bids };
 };
 
 //när man hämtar hela blocket ha med sold eller for salesom först med
