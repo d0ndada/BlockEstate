@@ -229,12 +229,7 @@ app.get("/api/consensus", (req, res) => {
   });
 });
 
-// need to test
-app.get("/api/property/:status", (req, res) => {
-  const search = blockEstate.findStatus(req.params.status);
-  res.status(200).json({ success: true, data: search });
-});
-// need to test
+// working
 app.get("/api/transaction/:id", (req, res) => {
   const result = blockEstate.findTransaction(req.params.id);
   if (!result) {
@@ -246,11 +241,9 @@ app.get("/api/transaction/:id", (req, res) => {
   }
   res.status(200).json({ success: true, data: result });
 });
-// need to test
-app.get("/api/property/id/:id", (req, res) => {
-  const result = blockEstate.findProperty(req.params.id);
-  console.log("Result from findProperty:", result); // Log the result
-
+// working
+app.get("/api/property/status/:id", (req, res) => {
+  const result = blockEstate.findStatus(req.params.id);
   if (!result) {
     return res.status(404).json({
       status: 404,
@@ -263,24 +256,33 @@ app.get("/api/property/id/:id", (req, res) => {
     .status(200)
     .json({ success: true, property: req.params.id, data: result });
 });
-
-app.get("/api/property/bids/id/:id", (req, res) => {
+//working
+app.get("/api/property/bids/:id", (req, res) => {
   const result = blockEstate.findActiveBidsOnProperty(req.params.id);
   if (!result) {
     return res.status(404).json({
       status: 404,
       success: false,
-      message: `Did not find bids on property by ${req.params.id}`,
+      message: `Not a property by ${req.params.id}`,
+    });
+  } else if (!result.underOffer) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `Property with id-${req.params.id} has been sold or not any bids yet`,
     });
   }
-  res
-    .status(200)
-    .json({
-      success: true,
-      type: `Bids on property ${req.params.id}`,
-      data: result,
-    });
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
 });
+
+//all active bids for a property
+
+// all properties with active bids
+
+// all sold properties
 
 // app.use("/api/blockEstate", blockchain);
 // app.use("/api/block", block);

@@ -200,10 +200,7 @@ Blockchain.prototype.findProperty = function (propertyId) {
   //   )
   // );
   // return { propertyId, block };
-  const status = [];
-};
-
-Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
+  // const status = [];
   const underOffer = [];
   const sold = [];
 
@@ -212,19 +209,52 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
       if (property.propertyId == propertyId) {
         if (property.status == "Sold") {
           sold.push(block);
-        } else if (property.type == "Under Offer") {
-          bids.push(block);
+        } else if (property.status == "Under Offer") {
+          underOffer.push(block);
         }
       }
     })
   );
+  if (underOffer.length === 0 && sold.length === 0) {
+    return null;
+  }
+
+  return { propertyId, sold, underOffer };
+};
+
+Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
+  const underOffer = [];
+  let isSold = false;
+
+  this.chain.forEach((block) => {
+    block.data.forEach((property) => {
+      if (
+        property.propertyId === propertyId &&
+        property.type === "AcceptBid" &&
+        property.status === "Sold"
+      ) {
+        isSold = true;
+      }
+    });
+  });
+
+  if (isSold) {
+    return { propertyId };
+  }
+
+  this.chain.forEach((block) => {
+    block.data.forEach((property) => {
+      if (property.propertyId === propertyId && property.type === "Bid") {
+        underOffer.push(block);
+      }
+    });
+  });
+
   if (underOffer.length === 0) {
     return null;
   }
-  if (sold.length === 0) {
-    sold.push("Not Sold");
-  }
-  return { propertyId, sold, underOffer };
+
+  return { propertyId, underOffer };
 };
 
 //när man hämtar hela blocket ha med sold eller for salesom först med
