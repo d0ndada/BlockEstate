@@ -126,7 +126,7 @@ Blockchain.prototype.proofOfWork = function (prevHash, data) {
 
 Blockchain.prototype.validateChain = function (blockChain) {
   let isValid = true;
-  for (i = 1; i < blockChain.length; i++) {
+  for (let i = 1; i < blockChain.length; i++) {
     const block = blockChain[i];
     const previousBlock = blockChain[i - 1];
     const hash = this.createHash(
@@ -281,7 +281,17 @@ Blockchain.prototype.GetAllListings = function () {
   });
   return { listed: listings.length, listings };
 };
+Blockchain.prototype.GetAllBids = function () {
+  const bids = [];
 
-//när man hämtar hela blocket ha med sold eller for salesom först med
+  this.chain.forEach((block) => {
+    block.data.forEach((property) => {
+      if (property.status === "Under Offer" && property.type === "Bid") {
+        bids.push(block);
+      }
+    });
+  });
+  return { bids: bids.length, block: bids };
+};
 
 module.exports = Blockchain;

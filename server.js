@@ -221,12 +221,10 @@ app.get("/api/consensus", (req, res) => {
           message: "Current chain is the longest.",
         });
       } else if (longestChain && !blockEstate.validateChain(longestChain)) {
-        return res
-          .status(200)
-          .json({
-            success: true,
-            message: "Found a longer chain, but it's not valid.",
-          });
+        return res.status(200).json({
+          success: true,
+          message: "Found a longer chain, but it's not valid.",
+        });
       } else {
         blockEstate.chain = longestChain;
         blockEstate.pendingList = pendingList;
@@ -327,7 +325,7 @@ app.use("/api/property/sold", (req, res) => {
     data: result,
   });
 });
-// get listings
+// working
 app.use("/api/property/listed", (req, res) => {
   const result = blockEstate.GetAllListings();
   if (!result.listings) {
@@ -342,6 +340,56 @@ app.use("/api/property/listed", (req, res) => {
     data: result,
   });
 });
+// not working
+app.get("/api/property/biddings", (req, res) => {
+  const result = blockEstate.GetAllBids();
+  if (!result) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No bids found`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
+// not working
+app.use("/api/property/listed/ascending", (req, res) => {
+  const result = blockEstate.GetAllListings();
+  if (!result.listings) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No property has been listed`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+  // not working
+});
+app.use("/api/property/listed/descending", (req, res) => {
+  const result = blockEstate.GetAllListings();
+  if (!result.listings) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No property has been listed`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
+// maybe date: listed, bids, sold or more
+
+// maybe add apartment details soon.
 
 // app.use("/api/blockEstate", blockchain);
 // app.use("/api/block", block);
