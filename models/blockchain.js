@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
 const sha256 = require("sha256");
-const { blockEstate } = require("../utilities/config");
 
 function Blockchain() {
   this.chain = [];
@@ -182,7 +181,17 @@ Blockchain.prototype.findTransaction = function (transactionId) {
 };
 
 Blockchain.prototype.findProperty = function (propertyId) {
-  return this.chain.find((block) => block.data.propertyId === propertyId);
+  const block = this.chain.find((block) =>
+    block.data.find((transaction) => transaction.propertyId === propertyId)
+  );
+  if (!block) {
+    return null;
+  } else {
+    const transaction = block.data.find(
+      (transaction) => transaction.propertyId === propertyId
+    );
+    return { transaction, block };
+  }
 };
 
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
