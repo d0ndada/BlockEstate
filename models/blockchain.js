@@ -259,6 +259,18 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
   return { propertyId, underOffer };
 };
 
+Blockchain.prototype.GetAllSoldProperty = function () {
+  const sold = [];
+  this.chain.forEach((block) => {
+    block.data.forEach((property) => {
+      if (property.status === "Sold" && property.type === "AcceptBid") {
+        sold.push(block);
+      }
+    });
+  });
+  return { hasBeenSold: sold.length, sold };
+};
+
 //när man hämtar hela blocket ha med sold eller for salesom först med
 
 module.exports = Blockchain;

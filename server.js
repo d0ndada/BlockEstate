@@ -278,7 +278,7 @@ app.get("/api/property/bids/:id", (req, res) => {
   });
 });
 
-//all history bids for a property
+//working
 app.get("/api/property/transactions/:id", (req, res) => {
   const result = blockEstate.findProperty(req.params.id);
   if (!result.propertyId) {
@@ -300,9 +300,22 @@ app.get("/api/property/transactions/:id", (req, res) => {
     data: result,
   });
 });
-// all properties with active bids
 
-// all sold properties
+// working
+app.use("/api/property/sold", (req, res) => {
+  const result = blockEstate.GetAllSoldProperty();
+  if (!result.sold) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No property has been sold`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
 
 // app.use("/api/blockEstate", blockchain);
 // app.use("/api/block", block);
