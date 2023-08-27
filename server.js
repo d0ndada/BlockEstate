@@ -278,8 +278,28 @@ app.get("/api/property/bids/:id", (req, res) => {
   });
 });
 
-//all active bids for a property
-
+//all history bids for a property
+app.get("/api/property/transactions/:id", (req, res) => {
+  const result = blockEstate.findProperty(req.params.id);
+  if (!result.propertyId) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `Not a property by ${req.params.id}`,
+    });
+  }
+  if (!result.transactions) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `Not a property by ${req.params.id}`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
 // all properties with active bids
 
 // all sold properties

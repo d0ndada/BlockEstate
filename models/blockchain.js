@@ -193,33 +193,35 @@ Blockchain.prototype.findTransaction = function (transactionId) {
 };
 
 Blockchain.prototype.findProperty = function (propertyId) {
-  // const block = this.chain.filter((block) =>
-  //   block.data.filter(
-  //     (property) =>
-  //       property.propertyId === propertyId && property.type === "Bid"
-  //   )
-  // );
-  // return { propertyId, block };
-  // const status = [];
-  const underOffer = [];
+  const transactions = [];
   const sold = [];
+  let findSoldBlock = false;
 
+  this.chain.forEach((block) =>
+    block.data.forEach((property) => {
+      if (property.propertyId == propertyId) {
+        transactions.push(block);
+        findSoldBlock = true;
+      }
+    })
+  );
+  if (!findSoldBlock) {
+    return { transactions };
+  }
   this.chain.forEach((block) =>
     block.data.forEach((property) => {
       if (property.propertyId == propertyId) {
         if (property.status == "Sold") {
           sold.push(block);
-        } else if (property.status == "Under Offer") {
-          underOffer.push(block);
         }
       }
     })
   );
-  if (underOffer.length === 0 && sold.length === 0) {
+  if (transactions.length === 0) {
     return null;
   }
 
-  return { propertyId, sold, underOffer };
+  return { propertyId, sold, transactions };
 };
 
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
