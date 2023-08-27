@@ -160,8 +160,20 @@ Blockchain.prototype.validateChain = function (blockChain) {
   return isValid;
 };
 
-Blockchain.prototype.findStatus = function (status) {
-  return this.chain.filter((block) => block.data.status === status);
+Blockchain.prototype.findStatus = function (propertyId) {
+  let status = "Not Found";
+
+  this.chain.forEach((block) => {
+    block.data.forEach((transaction) => {
+      if (transaction.propertyId === propertyId) {
+        if (transaction.type === "AcceptBid") {
+          status = transaction.status;
+        }
+      }
+    });
+  });
+
+  return { propertyId, status };
 };
 
 Blockchain.prototype.findTransaction = function (transactionId) {
@@ -181,37 +193,38 @@ Blockchain.prototype.findTransaction = function (transactionId) {
 };
 
 Blockchain.prototype.findProperty = function (propertyId) {
-  const block = this.chain.filter((block) =>
-    block.data.filter(
-      (property) =>
-        property.propertyId === propertyId && property.type === "Bid"
-    )
-  );
-  return { propertyId, block };
+  // const block = this.chain.filter((block) =>
+  //   block.data.filter(
+  //     (property) =>
+  //       property.propertyId === propertyId && property.type === "Bid"
+  //   )
+  // );
+  // return { propertyId, block };
+  const status = [];
 };
 
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
-  const bids = [];
+  const underOffer = [];
   const sold = [];
 
   this.chain.forEach((block) =>
     block.data.forEach((property) => {
       if (property.propertyId == propertyId) {
-        if (property.type == "AcceptBid") {
+        if (property.status == "Sold") {
           sold.push(block);
-        } else if (property.type == "Bid") {
+        } else if (property.type == "Under Offer") {
           bids.push(block);
         }
       }
     })
   );
-  if (bids.length === 0) {
+  if (underOffer.length === 0) {
     return null;
   }
   if (sold.length === 0) {
     sold.push("Not Sold");
   }
-  return { propertyId, sold, bids };
+  return { propertyId, sold, underOffer };
 };
 
 //när man hämtar hela blocket ha med sold eller for salesom först med
