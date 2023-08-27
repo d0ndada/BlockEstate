@@ -181,23 +181,35 @@ Blockchain.prototype.findTransaction = function (transactionId) {
 };
 
 Blockchain.prototype.findProperty = function (propertyId) {
-  const block = this.chain.find((block) =>
-    block.data.find((transaction) => transaction.propertyId === propertyId)
+  const block = this.chain.filter((block) =>
+    block.data.filter(
+      (property) =>
+        property.propertyId === propertyId && property.type === "Bid"
+    )
   );
-  if (!block) {
-    return null;
-  } else {
-    const transaction = block.data.find(
-      (transaction) => transaction.propertyId === propertyId
-    );
-    return { transaction, block };
-  }
+  return { propertyId, block };
 };
 
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
-  return this.chain.filter(
-    (block) => block.data.propertyId === propertyId && block.data.type === "Bid"
+  const bids = [];
+
+  this.chain.forEach((block) =>
+    block.data.forEach((property) => {
+      if (property.type == "Bid" && property.propertyId == propertyId) {
+        bids.push(block);
+      }
+    })
   );
+  if (bids.length === 0) {
+    return null;
+  }
+  // else {
+  //   const property = block.data.filter(
+  //     (property) => property.propertyId === propertyId
+  //   );
+  return { bids };
 };
+
+//när man hämtar hela blocket ha med sold eller for salesom först med
 
 module.exports = Blockchain;

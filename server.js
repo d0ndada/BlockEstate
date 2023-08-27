@@ -259,12 +259,27 @@ app.get("/api/property/id/:id", (req, res) => {
     });
   }
   console.log(result);
-  res.status(200).json({ success: true, data: result });
+  res
+    .status(200)
+    .json({ success: true, property: req.params.id, data: result });
 });
 
-app.get("/api/property/bids/:id", (req, res) => {
-  const result = blockEstate.findActiveBidsOnProperty(req.params.propertyId);
-  res.status(200).json({ success: true, data: result });
+app.get("/api/property/bids/id/:id", (req, res) => {
+  const result = blockEstate.findActiveBidsOnProperty(req.params.id);
+  if (!result) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `Did not find bids on property by ${req.params.id}`,
+    });
+  }
+  res
+    .status(200)
+    .json({
+      success: true,
+      type: `Bids on property ${req.params.id}`,
+      data: result,
+    });
 });
 
 // app.use("/api/blockEstate", blockchain);
