@@ -270,6 +270,17 @@ Blockchain.prototype.GetAllSoldProperty = function () {
   });
   return { hasBeenSold: sold.length, sold };
 };
+Blockchain.prototype.GetAllListings = function () {
+  const listings = [];
+  this.chain.forEach((block) => {
+    block.data.forEach((property) => {
+      if (property.status === "For Sale" && property.type === "Listing") {
+        listings.push(block);
+      }
+    });
+  });
+  return { listed: listings.length, listings };
+};
 
 //när man hämtar hela blocket ha med sold eller for salesom först med
 

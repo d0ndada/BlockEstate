@@ -316,6 +316,21 @@ app.use("/api/property/sold", (req, res) => {
     data: result,
   });
 });
+// get listings
+app.use("/api/property/listed", (req, res) => {
+  const result = blockEstate.GetAllListings();
+  if (!result.listings) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No property has been listed`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
 
 // app.use("/api/blockEstate", blockchain);
 // app.use("/api/block", block);
