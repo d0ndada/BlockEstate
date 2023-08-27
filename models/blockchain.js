@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const sha256 = require("sha256");
+const { blockEstate } = require("../utilities/config");
 
 function Blockchain() {
   this.chain = [];
@@ -35,7 +36,7 @@ Blockchain.prototype.createListingTransaction = function (
   //   propertyDetails
 ) {
   const transaction = {
-    type: "listing",
+    type: "Listing",
     transactionId: uuidv4().split("-").join(""),
     propertyId: uuidv4().split("-").join(""),
     seller,
@@ -89,7 +90,7 @@ Blockchain.prototype.acceptBidTransaction = function (
   seller
 ) {
   const transaction = {
-    type: "acceptBid",
+    type: "AcceptBid",
     transactionId: uuidv4().split("-").join(""),
     bidTransactionId: transactionId,
     propertyId,
@@ -158,6 +159,36 @@ Blockchain.prototype.validateChain = function (blockChain) {
     isValid = false;
   }
   return isValid;
+};
+
+Blockchain.prototype.findStatus = function (status) {
+  return this.chain.filter((block) => block.data.status === status);
+};
+
+Blockchain.prototype.findTransaction = function (transactionId) {
+  const block = this.chain.find((block) =>
+    block.data.find(
+      (transaction) => transaction.transactionId === transactionId
+    )
+  );
+  if (!block) {
+    return null;
+  } else {
+    const transaction = block.data.find(
+      (transaction) => transaction.transactionId === transactionId
+    );
+    return { transaction, block };
+  }
+};
+
+Blockchain.prototype.findProperty = function (propertyId) {
+  return this.chain.find((block) => block.data.propertyId === propertyId);
+};
+
+Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
+  return this.chain.filter(
+    (block) => block.data.propertyId === propertyId && block.data.type === "Bid"
+  );
 };
 
 module.exports = Blockchain;
