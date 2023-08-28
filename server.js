@@ -326,7 +326,6 @@ app.use("/api/property/sold", (req, res) => {
   });
 });
 // working
-//not show sold
 app.use("/api/property/listed/record", (req, res) => {
   const result = blockEstate.GetAllListings();
   if (!result.listings) {
@@ -341,7 +340,7 @@ app.use("/api/property/listed/record", (req, res) => {
     data: result,
   });
 });
-
+// working
 app.use("/api/property/listed/live", (req, res) => {
   const result = blockEstate.GetActiveListings();
   if (!result.listings) {
@@ -375,7 +374,8 @@ app.get("/api/property/biddings", (req, res) => {
 // list an property that has been sold // not tested
 app.post("/api/property/relist", (req, res) => {
   const { propertyId, seller, price } = req.body;
-  if (!blockEstate.canRelistProperty(propertyId)) {
+  const canRelist = blockEstate.canRelistProperty(propertyId);
+  if (canRelist) {
     const relistTransaction = blockEstate.createRelistTransaction(
       seller,
       price,
