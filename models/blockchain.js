@@ -296,13 +296,28 @@ Blockchain.prototype.GetAllSoldProperty = function () {
 };
 Blockchain.prototype.GetAllListings = function () {
   const listings = [];
+  const soldProperties = [];
+
+  this.chain.forEach((block) => {
+    block.data.forEach((transaction) => {
+      if (transaction.status === "Sold" && transaction.type === "AcceptBid") {
+        soldProperties.push(transaction.propertyId);
+      }
+    });
+  });
+
   this.chain.forEach((block) => {
     block.data.forEach((property) => {
-      if (property.status === "For Sale" && property.type === "Listing") {
+      if (
+        property.status === "For Sale" &&
+        property.type === "Listing" &&
+        soldProperties.indexOf(property.propertyId) === -1
+      ) {
         listings.push(block);
       }
     });
   });
+
   return { listed: listings.length, listings };
 };
 Blockchain.prototype.GetAllBids = function () {
