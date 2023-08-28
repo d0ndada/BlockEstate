@@ -109,8 +109,8 @@ Blockchain.prototype.createRelistTransaction = function (
 ) {
   const relistTransaction = {
     type: "Relist",
-    transactionId,
-    propertyId,
+    transactionId: uuidv4().split("-").join(""),
+    propertyId: propertyId,
     seller,
     bidder: null,
     price,

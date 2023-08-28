@@ -326,6 +326,7 @@ app.use("/api/property/sold", (req, res) => {
   });
 });
 // working
+//not show sold
 app.use("/api/property/listed", (req, res) => {
   const result = blockEstate.GetAllListings();
   if (!result.listings) {
@@ -355,24 +356,26 @@ app.get("/api/property/biddings", (req, res) => {
     data: result,
   });
 });
+app.post("/api/transaction/list", (req, res) => {
+  const transaction = blockEstate.createListingTransaction(
+    req.body.seller,
+    req.body.price
+  );
+  const index = blockEstate.addTransactionToPendingList(transaction);
+  res.status(200).json({ success: true, data: `Block index: ${index}` });
+});
 
 // list an property that has been sold // not tested
 app.post("/api/property/relist", (req, res) => {
   const { propertyId, seller, price } = req.body;
-  if (blockEstate.canRelistProperty(propertyId)) {
+  if (!blockEstate.canRelistProperty(propertyId)) {
     const relistTransaction = blockEstate.createRelistTransaction(
       seller,
       price,
       propertyId
     );
     blockEstate.addTransactionToPendingList(relistTransaction);
-    if (!result) {
-      return res.status(404).json({
-        status: 404,
-        success: false,
-        message: `Property cannot be relisted at this moment`,
-      });
-    }
+
     res.status(200).json({
       success: true,
       message: `Property relisted successfully`,
@@ -399,51 +402,3 @@ app.post("/api/property/relist", (req, res) => {
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 // house get relisted fix that so it can be listed again
-
-app.get("/api/property/biddings/older", (req, res) => {
-  const result = blockEstate.GetAllBids();
-  const newresult = blockEstate.SortBids(result);
-  if (!result) {
-    return res.status(404).json({
-      status: 404,
-      success: false,
-      message: `No bids found`,
-    });
-  }
-  res.status(200).json({
-    success: true,
-    data: newresult,
-  });
-});
-
-// not working
-app.use("/api/property/listed/ascending", (req, res) => {
-  const result = blockEstate.GetAllListings();
-  if (!result.listings) {
-    return res.status(404).json({
-      status: 404,
-      success: false,
-      message: `No property has been listed`,
-    });
-  }
-  res.status(200).json({
-    success: true,
-    data: result,
-  });
-  // not working
-});
-app.use("/api/property/listed/descending", (req, res) => {
-  const result = blockEstate.GetAllListings();
-  const descending = blockEstate.SortDescending(result.listings);
-  if (!result.listings) {
-    return res.status(404).json({
-      status: 404,
-      success: false,
-      message: `No property has been listed`,
-    });
-  }
-  res.status(200).json({
-    success: true,
-    data: descending,
-  });
-});
