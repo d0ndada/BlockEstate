@@ -296,6 +296,17 @@ Blockchain.prototype.GetAllSoldProperty = function () {
 };
 Blockchain.prototype.GetAllListings = function () {
   const listings = [];
+  this.chain.forEach((block) => {
+    block.data.forEach((property) => {
+      if (property.status === "For Sale" && property.type === "Listing") {
+        listings.push(block);
+      }
+    });
+  });
+  return { listed: listings.length, listings };
+};
+Blockchain.prototype.GetActiveListings = function () {
+  const listings = [];
   const soldProperties = [];
 
   this.chain.forEach((block) => {

@@ -266,7 +266,7 @@ app.get("/api/property/status/:id", (req, res) => {
     .json({ success: true, property: req.params.id, data: result });
 });
 //working
-app.get("/api/property/bids/:id", (req, res) => {
+app.get("/api/property/bids/active/:id", (req, res) => {
   const result = blockEstate.findActiveBidsOnProperty(req.params.id);
   if (!result) {
     return res.status(404).json({
@@ -327,8 +327,23 @@ app.use("/api/property/sold", (req, res) => {
 });
 // working
 //not show sold
-app.use("/api/property/listed", (req, res) => {
+app.use("/api/property/listed/record", (req, res) => {
   const result = blockEstate.GetAllListings();
+  if (!result.listings) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `No property has been listed`,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
+app.use("/api/property/listed/live", (req, res) => {
+  const result = blockEstate.GetActiveListings();
   if (!result.listings) {
     return res.status(404).json({
       status: 404,
@@ -355,14 +370,6 @@ app.get("/api/property/biddings", (req, res) => {
     success: true,
     data: result,
   });
-});
-app.post("/api/transaction/list", (req, res) => {
-  const transaction = blockEstate.createListingTransaction(
-    req.body.seller,
-    req.body.price
-  );
-  const index = blockEstate.addTransactionToPendingList(transaction);
-  res.status(200).json({ success: true, data: `Block index: ${index}` });
 });
 
 // list an property that has been sold // not tested
