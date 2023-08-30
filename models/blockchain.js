@@ -101,23 +101,38 @@ Blockchain.prototype.acceptBidTransaction = function (
   };
   return transaction;
 };
-
-Blockchain.prototype.createRelistTransaction = function (
-  seller,
+Blockchain.prototype.acceptBidTransaction = function (
+  transactionId,
+  propertyId,
+  bidder,
   price,
-  propertyId
+  seller
 ) {
-  const relistTransaction = {
-    type: "Listing",
+  const transaction = {
+    type: "AcceptBid",
+    transactionId: uuidv4().split("-").join(""),
+    bidTransactionId: transactionId,
+    propertyId,
+    seller,
+    bidder,
+    price,
+    status: "Sold",
+    dateSold: Date.now(),
+  };
+  return transaction;
+};
+Blockchain.prototype.deleteFromListing = function (seller, price, propertyId) {
+  const deleteTransaction = {
+    type: "DELETE",
     transactionId: uuidv4().split("-").join(""),
     propertyId: propertyId,
     seller,
     bidder: null,
     price,
-    status: "For Sale",
+    status: "DELETED",
     dateListed: Date.now(),
   };
-  return relistTransaction;
+  return deleteTransaction;
 };
 
 Blockchain.prototype.addTransactionToPendingList = function (transaction) {
