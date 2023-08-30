@@ -9,7 +9,7 @@ function Blockchain() {
 
   this.createBlock(1, "Genisis", "Genisis");
 }
-
+// Create Blck in the blockchain
 Blockchain.prototype.createBlock = function (nonce, previousHash, hash) {
   const block = {
     index: this.chain.length + 1,
@@ -28,6 +28,8 @@ Blockchain.prototype.createBlock = function (nonce, previousHash, hash) {
 Blockchain.prototype.getLastBlock = function () {
   return this.chain.at(-1);
 };
+
+// creating transaction Listing // Added potentially propertyDetails not in action yet
 
 Blockchain.prototype.createListingTransaction = function (
   seller,
@@ -53,7 +55,7 @@ Blockchain.prototype.createListingTransaction = function (
   };
   return transaction;
 };
-
+// for pof reward fo the agents(realitor) get reward for blocks approve or transaction approved to be right
 Blockchain.prototype.addCommission = function (amount, sender, recipient) {
   const commission = {
     amount,
@@ -62,6 +64,9 @@ Blockchain.prototype.addCommission = function (amount, sender, recipient) {
   };
   return commission;
 };
+
+// creating transaction CreateBid
+
 Blockchain.prototype.createBidTransaction = function (
   propertyId,
   bidder,
@@ -81,6 +86,8 @@ Blockchain.prototype.createBidTransaction = function (
   return transaction;
 };
 
+// creating transaction Accept bid on property
+
 Blockchain.prototype.acceptBidTransaction = function (
   transactionId,
   propertyId,
@@ -101,26 +108,8 @@ Blockchain.prototype.acceptBidTransaction = function (
   };
   return transaction;
 };
-Blockchain.prototype.acceptBidTransaction = function (
-  transactionId,
-  propertyId,
-  bidder,
-  price,
-  seller
-) {
-  const transaction = {
-    type: "AcceptBid",
-    transactionId: uuidv4().split("-").join(""),
-    bidTransactionId: transactionId,
-    propertyId,
-    seller,
-    bidder,
-    price,
-    status: "Sold",
-    dateSold: Date.now(),
-  };
-  return transaction;
-};
+// creating transaction Delete Listing
+
 Blockchain.prototype.deleteFromListing = function (seller, price, propertyId) {
   const deleteTransaction = {
     type: "DELETE",
@@ -134,6 +123,7 @@ Blockchain.prototype.deleteFromListing = function (seller, price, propertyId) {
   };
   return deleteTransaction;
 };
+// creating transaction Relist
 Blockchain.prototype.createRelistTransaction = function (
   seller,
   price,
@@ -151,18 +141,18 @@ Blockchain.prototype.createRelistTransaction = function (
   };
   return relistTransaction;
 };
-
+// adding to pending list a transaction
 Blockchain.prototype.addTransactionToPendingList = function (transaction) {
   this.pendingList.push(transaction);
   return this.getLastBlock()["index"] + 1;
 };
-
+// creating the hash
 Blockchain.prototype.createHash = function (prevHash, data, nonce) {
   const stringToHash = prevHash + JSON.stringify(data) + nonce.toString();
   const hash = sha256(stringToHash);
   return hash;
 };
-
+// pof for mining
 Blockchain.prototype.proofOfWork = function (prevHash, data) {
   let nonce = 0;
   let hash = this.createHash(prevHash, data, nonce);
@@ -174,6 +164,7 @@ Blockchain.prototype.proofOfWork = function (prevHash, data) {
   return nonce;
 };
 
+// validateChain
 Blockchain.prototype.validateChain = function (blockChain) {
   let isValid = true;
   for (let i = 1; i < blockChain.length; i++) {
@@ -250,13 +241,15 @@ Blockchain.prototype.findStatus = function (propertyId) {
 
   return { propertyId, status, sold, listed, bids, deleted };
 };
-
+// Checking if a property can be relisted by looking if it is currently sold
+// need to make it work for propertId that have been DELETED ******
 Blockchain.prototype.canRelistProperty = function (propertyId) {
   const propertyStatus = this.findStatus(propertyId).status;
 
   return propertyStatus === "Sold";
 };
 
+// Finding transaction by transactionId as input
 Blockchain.prototype.findTransaction = function (transactionId) {
   const block = this.chain.find((block) =>
     block.data.find(
@@ -273,6 +266,7 @@ Blockchain.prototype.findTransaction = function (transactionId) {
   }
 };
 
+// Finding property by its ID
 Blockchain.prototype.findProperty = function (propertyId) {
   const transactions = [];
   const sold = [];
@@ -304,6 +298,8 @@ Blockchain.prototype.findProperty = function (propertyId) {
 
   return { propertyId, sold, transactions };
 };
+
+// Finding active bids on property, only if it is ongoing listing not SOLD or DELETED
 
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
   const underOffer = [];
@@ -340,6 +336,8 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
   return { propertyId, underOffer };
 };
 
+//  Fetching all sold property on the chain
+// need to check against the new DELETED property addition *******
 Blockchain.prototype.GetAllSoldProperty = function () {
   const sold = [];
   this.chain.forEach((block) => {
@@ -351,6 +349,8 @@ Blockchain.prototype.GetAllSoldProperty = function () {
   });
   return { hasBeenSold: sold.length, sold };
 };
+
+// Fethcing all the listing made on the chain
 Blockchain.prototype.GetAllListings = function () {
   const listings = [];
   this.chain.forEach((block) => {
@@ -362,6 +362,9 @@ Blockchain.prototype.GetAllListings = function () {
   });
   return { listed: listings.length, listings };
 };
+
+// Fethcing all the active listing made on the chain, meaning not SOLD or DELETED
+
 Blockchain.prototype.GetActiveListings = function () {
   const listings = [];
   const soldProperties = [];
@@ -397,6 +400,9 @@ Blockchain.prototype.GetActiveListings = function () {
 
   return { listed: listings.length, listings };
 };
+
+// Fetching all the bids made on the chain
+
 Blockchain.prototype.GetAllBids = function () {
   const bids = [];
 
