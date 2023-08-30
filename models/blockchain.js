@@ -134,6 +134,23 @@ Blockchain.prototype.deleteFromListing = function (seller, price, propertyId) {
   };
   return deleteTransaction;
 };
+Blockchain.prototype.createRelistTransaction = function (
+  seller,
+  price,
+  propertyId
+) {
+  const relistTransaction = {
+    type: "Listing",
+    transactionId: uuidv4().split("-").join(""),
+    propertyId,
+    seller,
+    bidder: null,
+    price,
+    status: "For Sale",
+    dateListed: Date.now(),
+  };
+  return relistTransaction;
+};
 
 Blockchain.prototype.addTransactionToPendingList = function (transaction) {
   this.pendingList.push(transaction);

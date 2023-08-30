@@ -101,6 +101,13 @@ const relist = blockEstate.createRelistTransaction(
 blockEstate.addTransactionToPendingList(relist);
 blockEstate.createBlock(10, "10", "10");
 
+deletelisting = blockEstate.deleteFromListing(
+  listing3.seller,
+  listing3.price,
+  listing3.propertyId
+);
+blockEstate.addTransactionToPendingList(deletelisting);
+blockEstate.createBlock(11, "11", "11");
 console.log(blockEstate.chain);
 
 module.exports = { blockEstate, nodeAddress };
