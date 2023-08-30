@@ -200,7 +200,7 @@ Blockchain.prototype.validateChain = function (blockChain) {
   }
   return isValid;
 };
-//Problem proertry DELETED then RELISTED shows deleted = true
+
 // FInd the status on property show status, amount(asold, listed, bids,) deleted to show fasle or true
 Blockchain.prototype.findStatus = function (propertyId) {
   let status = "Not Found";
@@ -367,6 +367,7 @@ Blockchain.prototype.GetAllListings = function () {
 
 // Fethcing all the active listing made on the chain, meaning not SOLD or DELETED
 
+// TODO: not showing an DELETED property that got relisted**********
 Blockchain.prototype.GetActiveListings = function () {
   const listings = [];
   const soldProperties = [];
@@ -383,6 +384,9 @@ Blockchain.prototype.GetActiveListings = function () {
     block.data.forEach((transaction) => {
       if (transaction.status === "DELETED" && transaction.type === "DELETE") {
         deletedListings.push(transaction.propertyId);
+        if (this.findStatus(transaction.propertyId).status === "For Sale") {
+          listings.push(transaction);
+        }
       }
     });
   });
