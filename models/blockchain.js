@@ -246,7 +246,7 @@ Blockchain.prototype.findStatus = function (propertyId) {
 Blockchain.prototype.canRelistProperty = function (propertyId) {
   const propertyStatus = this.findStatus(propertyId).status;
 
-  return propertyStatus === "Sold";
+  return propertyStatus === "Sold" || "DELETED";
 };
 
 // Finding transaction by transactionId as input
