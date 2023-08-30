@@ -180,18 +180,38 @@ Blockchain.prototype.validateChain = function (blockChain) {
 
 Blockchain.prototype.findStatus = function (propertyId) {
   let status = "Not Found";
+  let sold = 0;
+  let listed = 0;
+  let bids = 0;
 
   this.chain.forEach((block) => {
     block.data.forEach((transaction) => {
       if (transaction.propertyId === propertyId) {
         // if (transaction.type === "AcceptBid") {
         status = transaction.status;
+
         // }
       }
     });
   });
 
-  return { propertyId, status };
+  this.chain.forEach((block) => {
+    block.data.forEach((transaction) => {
+      if (transaction.propertyId === propertyId) {
+        if (transaction.type === "AcceptBid") {
+          sold++;
+        }
+        if (transaction.type === "Listing") {
+          listed++;
+        }
+        if (transaction.type === "Bid") {
+          bids++;
+        }
+      }
+    });
+  });
+
+  return { propertyId, status, sold, listed, bids };
 };
 
 Blockchain.prototype.canRelistProperty = function (propertyId) {
