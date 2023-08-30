@@ -200,7 +200,7 @@ Blockchain.prototype.validateChain = function (blockChain) {
   }
   return isValid;
 };
-
+//Problem proertry DELETED then RELISTED shows deleted = true
 // FInd the status on property show status, amount(asold, listed, bids,) deleted to show fasle or true
 Blockchain.prototype.findStatus = function (propertyId) {
   let status = "Not Found";
@@ -242,7 +242,6 @@ Blockchain.prototype.findStatus = function (propertyId) {
   return { propertyId, status, sold, listed, bids, deleted };
 };
 // Checking if a property can be relisted by looking if it is currently sold
-// need to make it work for propertId that have been DELETED ******
 Blockchain.prototype.canRelistProperty = function (propertyId) {
   const propertyStatus = this.findStatus(propertyId).status;
 
