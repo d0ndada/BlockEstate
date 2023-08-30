@@ -39,7 +39,7 @@ app.post("/api/transaction/broadcast", (req, res) => {
     .json({ success: true, data: `Commisone created and updated` });
 });
 
-app.post("/api/transaction/list", (req, res) => {
+app.post("/api/transaction/:id/list", (req, res) => {
   const transaction = blockEstate.createListingTransaction(
     req.body.seller,
     req.body.price
