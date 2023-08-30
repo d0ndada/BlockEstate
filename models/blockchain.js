@@ -248,7 +248,7 @@ Blockchain.prototype.findStatus = function (propertyId) {
 Blockchain.prototype.canRelistProperty = function (propertyId) {
   const propertyStatus = this.findStatus(propertyId).status;
 
-  return propertyStatus === "Sold" || "DELETED";
+  return propertyStatus === "Sold" || propertyStatus === "DELETED";
 };
 
 // Finding transaction by transactionId as input
@@ -370,39 +370,33 @@ Blockchain.prototype.GetAllListings = function () {
 // TODO: not showing an DELETED property that got relisted**********
 Blockchain.prototype.GetActiveListings = function () {
   const listings = [];
-  const soldProperties = [];
-  const deletedListings = [];
+  const propertyStatus = {};
 
-  this.chain.forEach((block) => {
-    block.data.forEach((transaction) => {
-      if (transaction.status === "Sold" && transaction.type === "AcceptBid") {
-        soldProperties.push(transaction.propertyId);
-      }
-    });
-  });
-  this.chain.forEach((block) => {
-    block.data.forEach((transaction) => {
-      if (transaction.status === "DELETED" && transaction.type === "DELETE") {
-        deletedListings.push(transaction.propertyId);
-        if (this.findStatus(transaction.propertyId).status === "For Sale") {
-          listings.push(transaction);
+  // Process the chain in reverse order to get the most recent status of each property
+  this.chain
+    .slice()
+    .reverse()
+    .forEach((block) => {
+      block.data.forEach((transaction) => {
+        // If the property is already processed, skip it
+        if (propertyStatus[transaction.propertyId]) return;
+
+        if (transaction.status === "Sold" && transaction.type === "AcceptBid") {
+          propertyStatus[transaction.propertyId] = "Sold";
+        } else if (
+          transaction.status === "DELETED" &&
+          transaction.type === "DELETE"
+        ) {
+          propertyStatus[transaction.propertyId] = "DELETED";
+        } else if (
+          transaction.status === "For Sale" &&
+          transaction.type === "Listing"
+        ) {
+          propertyStatus[transaction.propertyId] = "For Sale";
+          listings.push(block);
         }
-      }
+      });
     });
-  });
-
-  this.chain.forEach((block) => {
-    block.data.forEach((property) => {
-      if (
-        property.status === "For Sale" &&
-        property.type === "Listing" &&
-        soldProperties.indexOf(property.propertyId) === -1 &&
-        deletedListings.indexOf(property.propertyId)
-      ) {
-        listings.push(block);
-      }
-    });
-  });
 
   return { listed: listings.length, listings };
 };
