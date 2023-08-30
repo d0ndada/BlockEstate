@@ -210,11 +210,13 @@ Blockchain.prototype.validateChain = function (blockChain) {
   return isValid;
 };
 
+// FInd the status on property show status, amount(asold, listed, bids,) deleted to show fasle or true
 Blockchain.prototype.findStatus = function (propertyId) {
   let status = "Not Found";
   let sold = 0;
   let listed = 0;
   let bids = 0;
+  let deleted = false;
 
   this.chain.forEach((block) => {
     block.data.forEach((transaction) => {
@@ -239,11 +241,14 @@ Blockchain.prototype.findStatus = function (propertyId) {
         if (transaction.type === "Bid") {
           bids++;
         }
+        if (transaction.type == "DELETE") {
+          deleted = true;
+        }
       }
     });
   });
 
-  return { propertyId, status, sold, listed, bids };
+  return { propertyId, status, sold, listed, bids, deleted };
 };
 
 Blockchain.prototype.canRelistProperty = function (propertyId) {
