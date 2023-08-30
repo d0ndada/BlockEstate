@@ -225,12 +225,15 @@ Blockchain.prototype.findStatus = function (propertyId) {
       if (transaction.propertyId === propertyId) {
         if (transaction.type === "AcceptBid") {
           sold++;
+          deleted = false;
         }
         if (transaction.type === "Listing") {
           listed++;
+          deleted = false;
         }
         if (transaction.type === "Bid") {
           bids++;
+          deleted = false;
         }
         if (transaction.type == "DELETE") {
           deleted = true;
