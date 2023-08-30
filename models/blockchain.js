@@ -360,11 +360,19 @@ Blockchain.prototype.GetAllListings = function () {
 Blockchain.prototype.GetActiveListings = function () {
   const listings = [];
   const soldProperties = [];
+  const deletedListings = [];
 
   this.chain.forEach((block) => {
     block.data.forEach((transaction) => {
       if (transaction.status === "Sold" && transaction.type === "AcceptBid") {
         soldProperties.push(transaction.propertyId);
+      }
+    });
+  });
+  this.chain.forEach((block) => {
+    block.data.forEach((transaction) => {
+      if (transaction.status === "DELETED" && transaction.type === "DELETE") {
+        deletedListings.push(transaction.propertyId);
       }
     });
   });
@@ -374,7 +382,8 @@ Blockchain.prototype.GetActiveListings = function () {
       if (
         property.status === "For Sale" &&
         property.type === "Listing" &&
-        soldProperties.indexOf(property.propertyId) === -1
+        soldProperties.indexOf(property.propertyId) === -1 &&
+        deletedListings.indexOf(property.propertyId)
       ) {
         listings.push(block);
       }
