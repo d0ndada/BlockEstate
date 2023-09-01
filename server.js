@@ -290,6 +290,14 @@ app.get("/api/property/bids/active/:id", (req, res) => {
 //working
 app.get("/api/property/transactions/:id", (req, res) => {
   const result = blockEstate.findProperty(req.params.id);
+
+  if (!result) {
+    return res.status(404).json({
+      status: 404,
+      success: false,
+      message: `Not a property by ${req.params.id}`,
+    });
+  }
   if (!result.propertyId) {
     return res.status(404).json({
       status: 404,
@@ -311,6 +319,7 @@ app.get("/api/property/transactions/:id", (req, res) => {
 });
 
 // working
+//NOTE: shows all property if it has been sold can show same property id on SOLD and then on LIVE LISTING
 app.use("/api/property/sold", (req, res) => {
   const result = blockEstate.GetAllSoldProperty();
   if (!result.sold) {
@@ -371,7 +380,7 @@ app.get("/api/property/biddings", (req, res) => {
   });
 });
 
-// list an property that has been sold // not tested
+// list an property that has been sold working
 app.post("/api/property/relist", (req, res) => {
   const { propertyId, seller, price } = req.body;
   const canRelist = blockEstate.canRelistProperty(propertyId);
