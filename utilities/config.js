@@ -7,10 +7,9 @@ const nodeAddress = uuidv4().split("-").join("");
 const listing1 = blockEstate.createListingTransaction("tony", 100);
 const listing2 = blockEstate.createListingTransaction("erik", 200);
 
-// blockEstate.addTransactionToPendingList(listing1);
 blockEstate.addTransactionToPendingList(listing2);
-
 blockEstate.createBlock(1, "prevhash", "currenhash");
+
 const bid1 = blockEstate.createBidTransaction(
   listing2.propertyId,
   "alice",
@@ -24,16 +23,11 @@ const bid2 = blockEstate.createBidTransaction(
   "erik"
 );
 
-// Add these bids to the pendingList
-// blockEstate.addTransactionToPendingList(bid1);
 blockEstate.addTransactionToPendingList(bid2);
-
-// Create a new block with these bids
 blockEstate.createBlock(2, "prevhash2", "currenhash2");
 blockEstate.addTransactionToPendingList(bid1);
-blockEstate.createBlock(3, "prevhash2", "currenhash2");
+blockEstate.createBlock(3, "prevhash3", "currenhash3");
 
-// Accept a bid
 const acceptedBid = blockEstate.acceptBidTransaction(
   bid2.transactionId,
   listing2.propertyId,
@@ -41,14 +35,11 @@ const acceptedBid = blockEstate.acceptBidTransaction(
   110,
   "tony"
 );
-
-// Add the accepted bid to the pendingList
 blockEstate.addTransactionToPendingList(acceptedBid);
+blockEstate.createBlock(4, "prevhash4", "currenhash4");
 
-// Create a new block with the accepted bid
-blockEstate.createBlock(4, "prevhash3", "currenhash3");
 blockEstate.addTransactionToPendingList(listing1);
-blockEstate.createBlock(5, "prevhash4", "currenthash4");
+blockEstate.createBlock(5, "prevhash5", "currenhash5");
 
 const bid3 = blockEstate.createBidTransaction(
   listing1.propertyId,
@@ -57,7 +48,7 @@ const bid3 = blockEstate.createBidTransaction(
   "erik"
 );
 blockEstate.addTransactionToPendingList(bid3);
-blockEstate.createBlock(6, "prevhash5", "currenthash5");
+blockEstate.createBlock(6, "prevhash6", "currenhash6");
 
 const accept = blockEstate.acceptBidTransaction(
   bid3.transactionId,
@@ -67,15 +58,15 @@ const accept = blockEstate.acceptBidTransaction(
   "tony"
 );
 blockEstate.addTransactionToPendingList(accept);
-blockEstate.createBlock(6, "prevhas4", "gg4");
+blockEstate.createBlock(7, "prevhash7", "currenhash7");
+
 const listing3 = blockEstate.createListingTransaction("susan", 300);
 blockEstate.addTransactionToPendingList(listing3);
-blockEstate.createBlock(7, "prevhash6", "currenhash6");
+blockEstate.createBlock(8, "prevhash8", "currenhash8");
 
-// 2. Properties with multiple bids but none accepted
 const listing4 = blockEstate.createListingTransaction("mike", 400);
 blockEstate.addTransactionToPendingList(listing4);
-blockEstate.createBlock(8, "prevhash7", "currenhash7");
+blockEstate.createBlock(9, "prevhash9", "currenhash9");
 
 const bid4 = blockEstate.createBidTransaction(
   listing4.propertyId,
@@ -92,22 +83,31 @@ const bid5 = blockEstate.createBidTransaction(
 
 blockEstate.addTransactionToPendingList(bid4);
 blockEstate.addTransactionToPendingList(bid5);
-blockEstate.createBlock(9, "prevhash8", "currenhash8");
+blockEstate.createBlock(10, "prevhash10", "currenhash10");
+
 const relist = blockEstate.createRelistTransaction(
   "alice",
   1444,
   bid1.propertyId
 );
 blockEstate.addTransactionToPendingList(relist);
-blockEstate.createBlock(10, "10", "10");
+blockEstate.createBlock(11, "prevhash11", "currenhash11");
 
-deletelisting = blockEstate.deleteFromListing(
+const deleteListing3 = blockEstate.deleteFromListing(
   listing3.seller,
   listing3.price,
   listing3.propertyId
 );
-blockEstate.addTransactionToPendingList(deletelisting);
-blockEstate.createBlock(11, "11", "11");
+const deleteListing4 = blockEstate.deleteFromListing(
+  listing4.seller,
+  listing4.price,
+  listing4.propertyId
+);
+
+blockEstate.addTransactionToPendingList(deleteListing3);
+blockEstate.addTransactionToPendingList(deleteListing4);
+blockEstate.createBlock(12, "prevhash12", "currenhash12");
+
 console.log(blockEstate.chain);
 
 module.exports = { blockEstate, nodeAddress };
