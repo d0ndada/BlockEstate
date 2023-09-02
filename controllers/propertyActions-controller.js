@@ -1,31 +1,32 @@
 const { blockEstate } = require("../utilities/config");
 
+const axios = require("axios");
+
 exports.listProperty = (req, res) => {
   const transaction = blockEstate.createListingTransaction(
     req.body.seller,
     req.body.price
   );
   const index = blockEstate.addTransactionToPendingList(transaction);
-  // fix it to work on all ***
+  // fix it to
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/property/list`, index);
+    await axios.post(`${url}/api/transaction/transaction`, transaction);
   });
 
   res.status(200).json({ success: true, data: `Block index: ${index}` });
 };
 
 exports.createBid = (req, res) => {
-  const transaction = blockEstate.createBidTransaction(
+  const bid = blockEstate.createBidTransaction(
     req.body.propertyId,
     req.body.bidder,
     req.body.price,
     req.body.seller
   );
-  const bid = blockEstate.addTransactionToPendingList(transaction);
+  blockEstate.addTransactionToPendingList(bid);
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/property/bid`, bid);
+    await axios.post(`${url}/api/transaction/transaction`, bid);
   });
-
   res.status(200).json({ success: true, data: "created bid of house" });
 };
 
@@ -37,11 +38,10 @@ exports.acceptBid = (req, res) => {
     req.body.price,
     req.body.seller
   );
-  const index = blockEstate.addTransactionToPendingList(acceptBid);
+  blockEstate.addTransactionToPendingList(acceptBid);
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/property/acceptBid`, index);
+    await axios.post(`${url}/api/transaction/transaction`, acceptBid);
   });
-
   res.status(200).json({ success: true, data: "accepted bid of house" });
 };
 // list an property that has been sold working
@@ -54,9 +54,9 @@ exports.relistProperty = (req, res) => {
       price,
       propertyId
     );
-    const index = blockEstate.addTransactionToPendingList(relistTransaction);
+    blockEstate.addTransactionToPendingList(relistTransaction);
     blockEstate.networkNodes.forEach(async (url) => {
-      await axios.post(`${url}/api/property/relist`, index);
+      await axios.post(`${url}/api/transaction/transaction`, relistTransaction);
     });
 
     res.status(200).json({
@@ -84,9 +84,9 @@ exports.deleteListing = (req, res) => {
       price,
       propertyId
     );
-    const index = blockEstate.addTransactionToPendingList(deleteTransaction);
+    blockEstate.addTransactionToPendingList(deleteTransaction);
     blockEstate.networkNodes.forEach(async (url) => {
-      await axios.post(`${url}/api/transaction`, index);
+      await axios.post(`${url}/api/transaction/transaction`, deleteTransaction);
     });
 
     res.status(200).json({
