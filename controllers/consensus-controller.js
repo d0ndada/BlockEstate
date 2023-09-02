@@ -1,12 +1,9 @@
-// conecnsues endpoint
-
 exports.consensus = (req, res) => {
   const currentChainLength = blockEstate.chain.length;
   let maxLength = currentChainLength;
   let longestChain = null;
   let pendingList = null;
 
-  // Iterera igenom alla noder i nätverket som finns upplagda på aktuell node...
   blockEstate.networkNodes.forEach((node) => {
     console.log("Node: ", node);
 
