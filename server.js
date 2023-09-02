@@ -2,11 +2,11 @@ const express = require("express");
 const { blockEstate, nodeAddress } = require("./utilities/config");
 const fetch = require("node-fetch");
 const axios = require("axios");
-// const blockchain = require("./routes/blockchain-routes");
+const blockchain = require("./routes/blockchain-routes");
 // const block = require("./routes/block-routes");
 // const transaction = require("./routes/transaction-routes");
 // const node = require("./routes/node-routes");
-// const consensus = require("./routes/consensus-route");
+const consensus = require("./routes/consensus-routes");
 
 const app = express();
 
@@ -14,9 +14,9 @@ const PORT = process.argv[2];
 
 app.use(express.json());
 
-app.get("/api/blockchain", (req, res) => {
-  res.status(200).json(blockEstate);
-});
+app.use("/api/blockchain", blockchain);
+
+app.use("/api/consensus", consensus);
 
 app.post("/api/transaction/broadcast", (req, res) => {
   const transaction = blockEstate.addCommission(
@@ -71,44 +71,6 @@ app.post("api/transaction/accept", (req, res) => {
   res.status(200).json({ success: true, data: "accepted bid of house" });
 });
 
-app.get("/api/approve", async (req, res) => {
-  // 1. hömta senaste blocket
-  const lastBlock = blockEstate.getLastBlock();
-  //   console.log("lastblock: ", lastblock);
-  // 2få tag i det senaste hashed
-  const lastBlockHash = lastBlock.hash;
-  //   console.log("lastblockHash: ", lastBlockHash);
-
-  // 3 skapa ett data objekt som innehåller
-  //  3.1 data egenskap som ska innehålla allt i  utestående list
-  // 3.2 idnex egenska som ger rätt index till nya blocket...
-  const data = {
-    data: blockEstate.pendingList,
-    index: lastBlock.index + 1,
-  };
-  //  4. skapa ett (nocne) värder
-  const nonce = blockEstate.proofOfWork(lastBlockHash, data);
-  //5.  skapa,räkna fram en hash för vårt nya block
-  const hash = blockEstate.createHash(lastBlockHash, data, nonce);
-  // 6. create Block....
-  //   blockEstate.addTransaction(6.25, "00", nodeAddress);
-  const newBlock = blockEstate.createBlock(nonce, lastBlockHash, hash);
-  // 7. Retunera blocket till avsänderan
-
-  blockEstate.networkNodes.forEach(async (url) => {
-    //   Anropa en endpoint /api/block som tar som argument body vårt nya block
-    await axios.post(`${url}/api/block`, { block: newBlock });
-  });
-
-  await axios.post(`${blockEstate.nodeUrl}/api/transaction/broadcast`, {
-    amount: 6.25,
-    sender: "00",
-    recipient: nodeAddress,
-  });
-
-  res.status(200).json({ success: true, data: newBlock });
-});
-
 app.post("/api/block", (req, res) => {
   const block = req.body.block;
   const lastBlock = blockEstate.getLastBlock();
@@ -126,116 +88,6 @@ app.post("/api/block", (req, res) => {
       data: block,
     });
   }
-});
-
-/* ----------------------------------------------------------------------------------------- */
-/* Administrativa endpoints... */
-/* ----------------------------------------------------------------------------------------- */
-
-// Registrera och skicka ut nya noder till alla noder i det befintliga nätverket...
-
-app.post("/api/register-broadcast-node", async (req, res) => {
-  // 1. Placera nya noden i aktuell nodes networkNodes lista...
-  const urlToAdd = req.body.nodeUrl;
-
-  if (blockEstate.networkNodes.indexOf(urlToAdd) === -1) {
-    blockEstate.networkNodes.push(urlToAdd);
-  }
-  // 2. Iterera igenom vår networkNodes lista och skicka till varje node
-  // i listan samma nya node
-  blockEstate.networkNodes.forEach(async (url) => {
-    const body = { nodeUrl: urlToAdd };
-
-    await fetch(`${url}/api/register-node`, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    });
-  });
-  // 3. Uppdatera nya noden med samma noder som vi har i nätverket...
-  const body = { nodes: [...blockEstate.networkNodes, blockEstate.nodeUrl] };
-
-  await fetch(`${urlToAdd}/api/register-nodes`, {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
-
-  res.status(201).json({ success: true, data: "nodes regristeresd" });
-});
-
-// Registrera enskild node
-app.post("/api/register-node", (req, res) => {
-  // Få in en nodes unika adress(URL)...
-  const url = req.body.nodeUrl; //http://localhost:3001
-  // Kontrollera att vi inte redan har registrerat denna URL...
-  // Om inte registrera, dvs placera noden i vår networkNode lista...
-  if (
-    blockEstate.networkNodes.indexOf(url) === -1 &&
-    blockEstate.nodeUrl !== url
-  ) {
-    blockEstate.networkNodes.push(url);
-  }
-
-  res.status(201).json({ success: true, data: "New node added" });
-});
-
-app.post("/api/register-nodes", (req, res) => {
-  const allNodes = req.body.nodes;
-
-  allNodes.forEach((url) => {
-    if (
-      blockEstate.networkNodes.indexOf(url) === -1 &&
-      blockEstate.nodeUrl !== url
-    ) {
-      blockEstate.networkNodes.push(url);
-    }
-  });
-  res.status(201).json({ success: true, data: "New nodes added" });
-});
-
-// conecnsues endpoint
-
-app.get("/api/consensus", (req, res) => {
-  const currentChainLength = blockEstate.chain.length;
-  let maxLength = currentChainLength;
-  let longestChain = null;
-  let pendingList = null;
-
-  // Iterera igenom alla noder i nätverket som finns upplagda på aktuell node...
-  blockEstate.networkNodes.forEach((node) => {
-    console.log("Node: ", node);
-
-    axios(`${node}/api/blockchain`).then((data) => {
-      console.log("Data ifrån axios: ", data);
-
-      if (data.data.chain.length > maxLength) {
-        maxLength = data.data.chain.length;
-        longestChain = data.data.chain;
-        pendingList = data.data.pendingList;
-      }
-
-      if (!longestChain) {
-        return res.status(200).json({
-          success: true,
-          message: "Current chain is the longest.",
-        });
-      } else if (longestChain && !blockEstate.validateChain(longestChain)) {
-        return res.status(200).json({
-          success: true,
-          message: "Found a longer chain, but it's not valid.",
-        });
-      } else {
-        blockEstate.chain = longestChain;
-        blockEstate.pendingList = pendingList;
-        res.status(200).json({
-          success: true,
-          message: "Chain replaced with the longest valid chain.",
-          data: blockEstate,
-        });
-      }
-    });
-  });
 });
 
 // working
