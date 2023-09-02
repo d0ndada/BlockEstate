@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 exports.broadcastNode = async (req, res) => {
   // 1. Placera nya noden i aktuell nodes networkNodes lista...
   const urlToAdd = req.body.nodeUrl;
