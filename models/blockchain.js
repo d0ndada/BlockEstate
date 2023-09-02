@@ -180,7 +180,7 @@ Blockchain.prototype.validateChain = function (blockChain) {
       isValid = false;
     }
 
-    if (previousBlock.hash !== block.previousHash) {
+    if (block.previousHash !== previousBlock.hash) {
       isValid = false;
     }
   }
