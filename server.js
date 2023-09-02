@@ -1,11 +1,10 @@
 const express = require("express");
 const { blockEstate, nodeAddress } = require("./utilities/config");
-const fetch = require("node-fetch");
-const axios = require("axios");
+
 const blockchain = require("./routes/blockchain-routes");
-// const block = require("./routes/block-routes");
-// const transaction = require("./routes/transaction-routes");
-// const node = require("./routes/node-routes");
+const block = require("./routes/block-routes");
+const transaction = require("./routes/transaction-routes");
+const node = require("./routes/node-routes");
 const consensus = require("./routes/consensus-routes");
 
 const app = express();
@@ -15,93 +14,13 @@ const PORT = process.argv[2];
 app.use(express.json());
 
 app.use("/api/blockchain", blockchain);
+app.use("/api/block", block);
 
 app.use("/api/consensus", consensus);
-
-app.post("/api/transaction/broadcast", (req, res) => {
-  const transaction = blockEstate.addCommission(
-    req.body.amount,
-    req.body.sender,
-    req.body.recipient
-  );
-  blockEstate.addTransactionToPendingList(transaction);
-  // iterara igenom all nätverksnoder i network nodes och anropa respektiva node
-  blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/transaction`, transaction);
-  });
-  // och skicka över den nya transaktionn..
-
-  // behöver vi använda axios för att göra ett post anrop
-  // await axios.post(url.body)
-
-  res
-    .status(201)
-    .json({ success: true, data: `Commisone created and updated` });
-});
-
-app.post("/api/transaction/:id/list", (req, res) => {
-  const transaction = blockEstate.createListingTransaction(
-    req.body.seller,
-    req.body.price
-  );
-  const index = blockEstate.addTransactionToPendingList(transaction);
-  res.status(200).json({ success: true, data: `Block index: ${index}` });
-});
-
-app.post("/api/transaction/bid", (req, res) => {
-  const bid = blockEstate.createBidTransaction(
-    req.body.propertyId,
-    req.body.bidder,
-    req.body.price,
-    req.body.seller
-  );
-  blockEstate.addTransactionToPendingList(bid);
-  res.status(200).json({ success: true, data: "created bid of house" });
-});
-
-app.post("api/transaction/accept", (req, res) => {
-  const acceptBid = blockEstate.acceptBidTransaction(
-    req.body.transactionId,
-    req.body.propertyId,
-    req.body.bidder,
-    req.body.price,
-    req.body.seller
-  );
-  blockEstate.addTransactionToPendingList(acceptBid);
-  res.status(200).json({ success: true, data: "accepted bid of house" });
-});
-
-app.post("/api/block", (req, res) => {
-  const block = req.body.block;
-  const lastBlock = blockEstate.getLastBlock();
-  const hashIsCorrect = lastBlock.hash === block.previousHash;
-  const hasCorrectIndex = lastBlock.index + 1 === block.index;
-
-  if (hashIsCorrect && hasCorrectIndex) {
-    blockEstate.chain.push(block);
-    blockEstate.pendingList = [];
-    res.status(201).json({ success: true, data: block });
-  } else {
-    res.status(400).json({
-      success: false,
-      errorMessage: "Blocket är inte godkänt",
-      data: block,
-    });
-  }
-});
+app.use("/api/node", node);
+app.use("/api/transaction", transaction);
 
 // working
-app.get("/api/transaction/:id", (req, res) => {
-  const result = blockEstate.findTransaction(req.params.id);
-  if (!result) {
-    return res.status(404).json({
-      status: 404,
-      success: false,
-      message: `Did not find a transaction by id ${req.params.id}`,
-    });
-  }
-  res.status(200).json({ success: true, data: result });
-});
 // working
 app.get("/api/property/status/:id", (req, res) => {
   const result = blockEstate.findStatus(req.params.id);
