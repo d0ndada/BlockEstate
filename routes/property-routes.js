@@ -10,8 +10,8 @@ const {
   biddings,
 } = require("../controllers/property-controller");
 
-router.route("/status").get(status);
-router.route("/ongoingBids").get(ongoingBids);
+router.route("/status/:id").get(status);
+router.route("/ongoingBids/:id").get(ongoingBids);
 router.route("/history/:id").get(historyProperty);
 router.route("/sold").get(sold);
 router.route("/listed/record").get(recordListings);

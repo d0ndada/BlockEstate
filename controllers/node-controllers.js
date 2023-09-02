@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { blockEstate } = require("../utilities/config");
 
 exports.broadcastNode = async (req, res) => {
   // 1. Placera nya noden i aktuell nodes networkNodes lista...

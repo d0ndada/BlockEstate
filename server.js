@@ -17,7 +17,6 @@ app.use(express.json());
 
 app.use("/api/blockchain", blockchain);
 app.use("/api/block", block);
-
 app.use("/api/consensus", consensus);
 app.use("/api/node", node);
 app.use("/api/transaction", transaction);

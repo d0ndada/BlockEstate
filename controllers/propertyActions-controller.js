@@ -1,3 +1,5 @@
+const { blockEstate } = require("../utilities/config");
+
 exports.listProperty = (req, res) => {
   const transaction = blockEstate.createListingTransaction(
     req.body.seller,
@@ -51,6 +53,33 @@ exports.relistProperty = (req, res) => {
     res.status(200).json({
       success: false,
       message: `Property cannot be relisted at this moment`,
+    });
+  }
+};
+// delete an property from listing
+exports.deleteListing = (req, res) => {
+  const { propertyId, seller, price } = req.body;
+  const status = blockEstate.findStatus(propertyId);
+  const listing = status.status;
+
+  if (listing === "For Sale") {
+    const deleteTransaction = blockEstate.deleteFromListing(
+      seller,
+      price,
+      propertyId
+    );
+    blockEstate.addTransactionToPendingList(deleteTransaction);
+
+    res.status(200).json({
+      success: true,
+      message: `Property deleted from listing successfully`,
+
+      data: deleteTransaction,
+    });
+  } else {
+    res.status(200).json({
+      success: false,
+      message: `Property cannot be deleted from listing at this moment`,
     });
   }
 };

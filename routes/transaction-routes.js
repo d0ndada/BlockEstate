@@ -7,6 +7,6 @@ const {
 
 router.route("/broadcast").post(broadcast);
 // router.route("/commission").post();
-router.route("/id/:id").get(getTransaction);
+router.route("/:id").get(getTransaction);
 
 module.exports = router;

@@ -1,3 +1,5 @@
+const { blockEstate } = require("../utilities/config");
+
 exports.block = (req, res) => {
   const block = req.body.block;
   const lastBlock = blockEstate.getLastBlock();

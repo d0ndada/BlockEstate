@@ -1,3 +1,5 @@
+const { blockEstate } = require("../utilities/config");
+
 exports.consensus = (req, res) => {
   const currentChainLength = blockEstate.chain.length;
   let maxLength = currentChainLength;

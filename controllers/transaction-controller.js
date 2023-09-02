@@ -1,3 +1,5 @@
+const { blockEstate } = require("../utilities/config");
+
 exports.broadcast = (req, res) => {
   const transaction = blockEstate.addCommission(
     req.body.amount,

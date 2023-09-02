@@ -1,3 +1,5 @@
+const { blockEstate } = require("../utilities/config");
+
 exports.status = (req, res) => {
   const result = blockEstate.findStatus(req.params.id);
   if (!result) {
