@@ -272,13 +272,16 @@ Blockchain.prototype.findTransaction = function (transactionId) {
 Blockchain.prototype.findProperty = function (propertyId) {
   const transactions = [];
 
-  this.chain.forEach((block) =>
-    block.data.forEach((property) => {
-      if (property.propertyId == propertyId) {
-        transactions.push(block);
-      }
-    })
-  );
+  this.chain.forEach((block) => {
+    const relevant = block.data.filter(
+      (property) => property.propertyId == propertyId
+    );
+
+    if (relevant.length > 0) {
+      const cloneBlock = { ...block, data: relevant };
+      transactions.push(cloneBlock);
+    }
+  });
 
   if (transactions.length === 0) {
     return null;
