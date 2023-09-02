@@ -62,7 +62,7 @@ exports.deleteListing = (req, res) => {
   const status = blockEstate.findStatus(propertyId);
   const listing = status.status;
 
-  if (listing === "For Sale") {
+  if (listing === "For Sale" || listing === "Under Offer") {
     const deleteTransaction = blockEstate.deleteFromListing(
       seller,
       price,
