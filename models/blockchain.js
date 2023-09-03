@@ -317,32 +317,37 @@ Blockchain.prototype.findProperty = function (propertyId) {
 Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
   const underOffer = [];
   let isSold = false;
+  let activeBids = 0;
 
   for (let i = 0; i < this.chain.length; i++) {
     const block = this.chain[i];
+    const relevant = [];
     for (let j = 0; j < block.data.length; j++) {
       const property = block.data[j];
-      if (
-        property.propertyId === propertyId &&
-        property.type === "AcceptBid" &&
-        property.status === "Sold"
-      ) {
-        isSold = true;
+      if (property.propertyId === propertyId) {
+        if (property.type === "AcceptBid" && property.status === "Sold") {
+          isSold = true;
+        }
+        if (property.type === "Bid") {
+          activeBids++;
+          relevant.push(property);
+        }
       }
-      if (property.propertyId === propertyId && property.type === "Bid") {
-        underOffer.push(block);
-      }
+    }
+    if (relevant.length > 0) {
+      const cloneBlock = { ...block, data: relevant };
+      underOffer.push(cloneBlock);
     }
   }
   if (isSold) {
-    return { propertyId };
+    return null;
   }
 
   if (underOffer.length === 0) {
     return null;
   }
 
-  return { propertyId, underOffer };
+  return { propertyId, activeBids, underOffer };
 };
 
 //  Fetching all sold property on the chain
