@@ -1,48 +1,46 @@
-
-
 # RealEstateChain
 A blockchain-based solution for managing real estate transactions, ensuring transparency, security, and trust.
 
 ## Overview
 RealEstateChain is a prototype blockchain system designed to handle property transactions. By leveraging the immutability and transparency of blockchain technology, RealEstateChain aims to streamline the property buying/selling process, reduce fraud, and increase trust among parties.
 
-## Features
-Immutable Records: Once a transaction is added to the blockchain, it cannot be altered, ensuring the authenticity of property records.
-Transparent Transactions: All parties involved can view the transaction history, ensuring full transparency in the property buying/selling process.
-Secure: Uses cryptographic principles to ensure the security of transactions and data.
-Getting Started
-Prerequisites
-Node.js
-Postman (for API testing)
-Installation
+> **Note:** In this concept, the nodes will be run by the persons who work on the BlockEstate firm. When they mine a block, they receive a commission for the transaction.
 
-1. Clone the repository:
+## BlockEstate API Endpoints
 
-```
-git clone https://github.com/yourusername/RealEstateChain.git
-```
+### Block Routes
+- **POST** `/api/block` - Create a new block.
+- **GET** `/api/block/:hash` - Retrieve a block by its hash.
 
-2. Navigate to the project directory:
+### Blockchain Routes
+- **GET** `/api/blockchain` - Retrieve the entire blockchain.
+- **GET** `/api/blockchain/approve` - Mine a new block.
 
-```
-cd RealEstateChain
-```
-3. Install the required packages:
+### Consensus Routes
+- **GET** `/api/consensus` - Reach consensus among network nodes.
 
-```
-npm install
-```
-Start the server:
-```
-npm start
-```
-## Usage
-Use Postman to interact with the API endpoints.
-[Describe any specific steps or API endpoints here.]
-Future Enhancements
-Integration with real-world property databases.
-Implementation of smart contracts for advanced transaction conditions.
-User-friendly frontend interface for non-technical users.
-Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+### Node Routes
+- **POST** `/api/node/register-node` - Register a new node.
+- **POST** `/api/node/register-nodes` - Register multiple nodes.
+- **POST** `/api/node/register-broadcast-node` - Broadcast the node to the network.
 
+### Property Routes
+- **GET** `/api/property/status/:id` - Retrieve the status of a property by its ID.
+- **GET** `/api/property/bids/:id` - Retrieve ongoing bids for a property by its ID.
+- **GET** `/api/property/history/:id` - Retrieve the history of a property by its ID.
+- **GET** `/api/property/sold` - Retrieve all sold properties.
+- **GET** `/api/property/listed/record` - Retrieve all recorded listings.
+- **GET** `/api/property/listed/live` - Retrieve all active listings.
+- **GET** `/api/property/biddings` - Retrieve all biddings.
+
+### Property Actions Routes
+- **POST** `/api/property/list` - List a property.
+- **POST** `/api/property/bid` - Create a bid for a property.
+- **POST** `/api/property/acceptBid` - Accept a bid for a property.
+- **POST** `/api/property/relist` - Relist a property.
+- **POST** `/api/property/deleteListing` - Delete a property listing.
+
+### Transaction Routes
+- **POST** `/api/transaction/broadcast` - Broadcast a transaction.
+- **POST** `/api/transaction/transaction` - Create a new transaction.
+- **GET** `/api/transaction/:id` - Retrieve a transaction by its ID.
