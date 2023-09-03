@@ -7,7 +7,6 @@ exports.consensus = async (req, res) => {
   let longestChain = null;
   let pendingList = null;
 
-  // Iterera igenom alla noder i nätverket som finns upplagda på aktuell node...
   blockEstate.networkNodes.forEach((node) => {
     console.log("Node: ", node);
 

@@ -356,7 +356,6 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
 };
 
 //  Fetching all sold property on the chain
-// need to check against the new DELETED property addition *******
 Blockchain.prototype.GetAllSoldProperty = function () {
   const sold = [];
 
@@ -391,8 +390,6 @@ Blockchain.prototype.GetAllListings = function () {
 };
 
 // Fethcing all the active listing made on the chain, meaning not SOLD or DELETED
-
-// TODO: not showing an DELETED property that got relisted**********
 Blockchain.prototype.GetActiveListings = function () {
   const listings = [];
 

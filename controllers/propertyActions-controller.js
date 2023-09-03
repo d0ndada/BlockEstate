@@ -8,7 +8,6 @@ exports.listProperty = (req, res) => {
     req.body.price
   );
   const index = blockEstate.addTransactionToPendingList(transaction);
-  // fix it to
   blockEstate.networkNodes.forEach(async (url) => {
     await axios.post(
       `${url}/api/transaction/broadcast-transaction`,

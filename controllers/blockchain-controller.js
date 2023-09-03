@@ -15,8 +15,6 @@ exports.mineBlock = async (req, res) => {
   const nonce = blockEstate.proofOfWork(previousHash, data);
   const hash = blockEstate.createHash(previousHash, data, nonce);
 
-  // blockEstate.addTransaction(6.25, '00', nodeAddress);
-
   const block = blockEstate.createBlock(nonce, previousHash, hash);
 
   blockEstate.networkNodes.forEach(async (url) => {
@@ -25,7 +23,7 @@ exports.mineBlock = async (req, res) => {
 
   await axios.post(`${blockEstate.nodeUrl}/api/transaction/broadcast`, {
     amount: 6.25,
-    sender: "00",
+    sender: "SYSTEM",
     recipient: nodeAddress,
   });
 

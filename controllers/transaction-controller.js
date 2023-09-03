@@ -8,7 +8,6 @@ exports.broadcast = (req, res) => {
     req.body.recipient
   );
   blockEstate.addTransactionToPendingList(transaction);
-  // iterara igenom all nätverksnoder i network nodes och anropa respektiva node
   blockEstate.networkNodes.forEach(async (url) => {
     await axios.post(`${url}/api/transaction`, transaction);
   });
