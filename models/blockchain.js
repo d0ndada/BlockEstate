@@ -203,7 +203,7 @@ Blockchain.prototype.validateChain = function (blockChain) {
 
 // FInd the status on property show status, amount(asold, listed, bids,) deleted to show fasle or true
 Blockchain.prototype.findStatus = function (propertyId) {
-  let status = "Not Found";
+  let status = null;
   let sold = 0;
   let listed = 0;
   let bids = 0;
@@ -247,6 +247,7 @@ Blockchain.prototype.findStatus = function (propertyId) {
     sold,
     listed,
     bids,
+    deleteListing: deleted,
     isListed,
   };
 };
@@ -390,33 +391,18 @@ Blockchain.prototype.GetAllListings = function () {
 // TODO: not showing an DELETED property that got relisted**********
 Blockchain.prototype.GetActiveListings = function () {
   const listings = [];
-  const propertyStatus = {};
 
-  // Process the chain in reverse order to get the most recent status of each property
-  this.chain
-    .slice()
-    .reverse()
-    .forEach((block) => {
-      block.data.forEach((transaction) => {
-        // If the property is already processed, skip it
-        if (propertyStatus[transaction.propertyId]) return;
-
-        if (transaction.status === "Sold" && transaction.type === "AcceptBid") {
-          propertyStatus[transaction.propertyId] = "Sold";
-        } else if (
-          transaction.status === "DELETED" &&
-          transaction.type === "DELETE"
-        ) {
-          propertyStatus[transaction.propertyId] = "DELETED";
-        } else if (
-          transaction.status === "For Sale" &&
-          transaction.type === "Listing"
-        ) {
-          propertyStatus[transaction.propertyId] = "For Sale";
-          listings.push(block);
-        }
-      });
-    });
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
+      const propertyStatus = this.findStatus(property.propertyId).status;
+      if (propertyStatus === "For Sale") {
+        listings.push(property);
+      }
+    }
+  }
+  console.log(listings);
 
   return { listed: listings.length, listings };
 };
