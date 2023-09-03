@@ -2,13 +2,14 @@ const { blockEstate } = require("../utilities/config");
 
 exports.status = (req, res) => {
   const result = blockEstate.findStatus(req.params.id);
-  if (!result) {
+  if (!result || !result.status) {
     return res.status(404).json({
       status: 404,
       success: false,
       message: `Did not find property with id ${req.params.id}`,
     });
   }
+
   console.log(result);
   res
     .status(200)
