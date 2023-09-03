@@ -1,4 +1,5 @@
 const { blockEstate } = require("../utilities/config");
+const axios = require("axios");
 
 exports.broadcast = (req, res) => {
   const transaction = blockEstate.addCommission(
@@ -15,6 +16,12 @@ exports.broadcast = (req, res) => {
   res
     .status(201)
     .json({ success: true, data: `Commisone created and updated` });
+};
+
+exports.transaction = (req, res) => {
+  const transaction = req.body;
+  const index = blockEstate.addTransactionToPendingList(transaction);
+  res.status(201).json({ success: true, data: `Block index: ${index}` });
 };
 
 exports.getTransaction = (req, res) => {
