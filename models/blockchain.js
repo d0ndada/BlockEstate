@@ -268,23 +268,34 @@ Blockchain.prototype.findTransaction = function (transactionId) {
 // Finding property by its ID
 Blockchain.prototype.findProperty = function (propertyId) {
   const transactions = [];
+  const status = [];
+  const findStatus = this.findStatus(propertyId);
+  status.push(findStatus);
 
-  this.chain.forEach((block) => {
-    const relevant = block.data.filter(
-      (property) => property.propertyId == propertyId
-    );
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    const relevant = [];
 
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
+      if (property.propertyId === propertyId) {
+        relevant.push(property);
+      }
+    }
     if (relevant.length > 0) {
       const cloneBlock = { ...block, data: relevant };
       transactions.push(cloneBlock);
     }
-  });
+  }
 
   if (transactions.length === 0) {
     return null;
   }
 
-  return { propertyId, transactions };
+  return {
+    property: status,
+    transactions,
+  };
 };
 
 // Finding active bids on property, only if it is ongoing listing not SOLD or DELETED
