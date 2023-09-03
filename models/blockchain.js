@@ -395,13 +395,23 @@ Blockchain.prototype.GetActiveListings = function () {
 Blockchain.prototype.GetAllBids = function () {
   const bids = [];
 
-  this.chain.forEach((block) => {
-    block.data.forEach((property) => {
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
       if (property.status === "Under Offer" && property.type === "Bid") {
         bids.push(block);
       }
-    });
-  });
+    }
+  }
+
+  // this.chain.forEach((block) => {
+  //   block.data.forEach((property) => {
+  //     if (property.status === "Under Offer" && property.type === "Bid") {
+  //       bids.push(block);
+  //     }
+  //   });
+  // });
   return { bids: bids.length, block: bids };
 };
 
