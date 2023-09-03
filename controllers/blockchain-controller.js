@@ -6,29 +6,31 @@ exports.getBlockchain = (req, res) => {
 };
 
 exports.mineBlock = async (req, res) => {
-  const lastBlock = blockEstate.getLastBlock();
-
-  const lastBlockHash = lastBlock.hash;
-
+  const previousBlock = blockEstate.getLastBlock();
+  const previousHash = previousBlock.hash;
   const data = {
     data: blockEstate.pendingList,
-    index: lastBlock.index + 1,
+    index: previousBlock.index + 1,
   };
+  const nonce = blockEstate.proofOfWork(previousHash, data);
+  const hash = blockEstate.createHash(previousHash, data, nonce);
 
-  const nonce = blockEstate.proofOfWork(lastBlockHash, data);
+  // blockEstate.addTransaction(6.25, '00', nodeAddress);
 
-  const hash = blockEstate.createHash(lastBlockHash, data, nonce);
-
-  const newBlock = blockEstate.createBlock(nonce, lastBlockHash, hash);
+  const block = blockEstate.createBlock(nonce, previousHash, hash);
 
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/block`, { block: newBlock });
+    await axios.post(`${url}/api/block`, { block: block });
   });
 
   await axios.post(`${blockEstate.nodeUrl}/api/transaction/broadcast`, {
-    commission: 6.25,
-    sender: "SYSTEM",
+    amount: 6.25,
+    sender: "00",
     recipient: nodeAddress,
   });
-  res.status(200).json({ success: true, data: newBlock });
+
+  res.status(200).json({
+    success: true,
+    data: block,
+  });
 };

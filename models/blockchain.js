@@ -161,17 +161,17 @@ Blockchain.prototype.proofOfWork = function (prevHash, data) {
     nonce++;
     hash = this.createHash(prevHash, data, nonce);
   }
+
   return nonce;
 };
-
-// validateChain
 Blockchain.prototype.validateChain = function (blockChain) {
   let isValid = true;
-  for (let i = 1; i < blockChain.length; i++) {
+
+  for (i = 1; i < blockChain.length; i++) {
     const block = blockChain[i];
     const previousBlock = blockChain[i - 1];
     const hash = this.createHash(
-      previousBlock,
+      previousBlock.hash,
       { data: block.data, index: block.index },
       block.nonce
     );
@@ -185,11 +185,13 @@ Blockchain.prototype.validateChain = function (blockChain) {
     }
   }
 
+  // Validera genisis blocket...
   const genesisBlock = blockChain.at(0);
   const isGenesisNonceValid = genesisBlock.nonce === 1;
   const isGenesisHashValid = genesisBlock.hash === "Genisis";
   const isGenesisPreviousHashValid = genesisBlock.previousHash === "Genisis";
   const hasNoData = genesisBlock.data.length === 0;
+
   if (
     !isGenesisNonceValid ||
     !isGenesisHashValid ||
@@ -198,8 +200,10 @@ Blockchain.prototype.validateChain = function (blockChain) {
   ) {
     isValid = false;
   }
+
   return isValid;
 };
+//
 
 // FInd the status on property show status, amount(asold, listed, bids,) deleted to show fasle or true
 Blockchain.prototype.findStatus = function (propertyId) {
