@@ -344,13 +344,17 @@ Blockchain.prototype.GetAllSoldProperty = function () {
 // Fethcing all the listing made on the chain
 Blockchain.prototype.GetAllListings = function () {
   const listings = [];
-  this.chain.forEach((block) => {
-    block.data.forEach((property) => {
+
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
       if (property.status === "For Sale" && property.type === "Listing") {
         listings.push(block);
       }
-    });
-  });
+    }
+  }
+
   return { listed: listings.length, listings };
 };
 
@@ -405,13 +409,6 @@ Blockchain.prototype.GetAllBids = function () {
     }
   }
 
-  // this.chain.forEach((block) => {
-  //   block.data.forEach((property) => {
-  //     if (property.status === "Under Offer" && property.type === "Bid") {
-  //       bids.push(block);
-  //     }
-  //   });
-  // });
   return { bids: bids.length, block: bids };
 };
 
