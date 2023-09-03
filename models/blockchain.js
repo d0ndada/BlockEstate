@@ -436,12 +436,6 @@ Blockchain.prototype.GetAllBids = function () {
   return { bids: bids.length, block: bids };
 };
 
-// not test to work not using it
-Blockchain.prototype.SortDescending = function (e) {
-  const descending = e.sort((a, b) => a.data.data.price - b.data.data.price);
-  return descending;
-};
-
 Blockchain.prototype.findBlock = function (hash) {
   for (let i = 0; i < this.chain.length; i++) {
     const block = this.chain[i];
@@ -452,4 +446,9 @@ Blockchain.prototype.findBlock = function (hash) {
   return null;
 };
 
+// no use for now
+Blockchain.prototype.SortDescending = function (e) {
+  const descending = e.sort((a, b) => a.data.data.price - b.data.data.price);
+  return descending;
+};
 module.exports = Blockchain;
