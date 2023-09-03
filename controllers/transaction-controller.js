@@ -15,7 +15,7 @@ exports.broadcast = (req, res) => {
 
   res
     .status(201)
-    .json({ success: true, data: `Commisone created and updated` });
+    .json({ success: true, data: `Commisson created and updated` });
 };
 
 exports.transaction = (req, res) => {

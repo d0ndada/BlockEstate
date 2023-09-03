@@ -10,7 +10,10 @@ exports.listProperty = (req, res) => {
   const index = blockEstate.addTransactionToPendingList(transaction);
   // fix it to
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/transaction/transaction`, transaction);
+    await axios.post(
+      `${url}/api/transaction/broadcast-transaction`,
+      transaction
+    );
   });
 
   res.status(200).json({ success: true, data: `Block index: ${index}` });
@@ -25,7 +28,7 @@ exports.createBid = (req, res) => {
   );
   blockEstate.addTransactionToPendingList(bid);
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/transaction/transaction`, bid);
+    await axios.post(`${url}/api/transaction/broadcast-transaction`, bid);
   });
   res.status(200).json({ success: true, data: "created bid of house" });
 };
@@ -40,7 +43,7 @@ exports.acceptBid = (req, res) => {
   );
   blockEstate.addTransactionToPendingList(acceptBid);
   blockEstate.networkNodes.forEach(async (url) => {
-    await axios.post(`${url}/api/transaction/transaction`, acceptBid);
+    await axios.post(`${url}/api/transaction/broadcast-transaction`, acceptBid);
   });
   res.status(200).json({ success: true, data: "accepted bid of house" });
 };
@@ -56,7 +59,10 @@ exports.relistProperty = (req, res) => {
     );
     blockEstate.addTransactionToPendingList(relistTransaction);
     blockEstate.networkNodes.forEach(async (url) => {
-      await axios.post(`${url}/api/transaction/transaction`, relistTransaction);
+      await axios.post(
+        `${url}/api/transaction/broadcast-transaction`,
+        relistTransaction
+      );
     });
 
     res.status(200).json({
@@ -86,7 +92,10 @@ exports.deleteListing = (req, res) => {
     );
     blockEstate.addTransactionToPendingList(deleteTransaction);
     blockEstate.networkNodes.forEach(async (url) => {
-      await axios.post(`${url}/api/transaction/transaction`, deleteTransaction);
+      await axios.post(
+        `${url}/api/transaction/broadcast-transaction`,
+        deleteTransaction
+      );
     });
 
     res.status(200).json({

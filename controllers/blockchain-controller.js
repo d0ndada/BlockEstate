@@ -26,10 +26,9 @@ exports.mineBlock = async (req, res) => {
   });
 
   await axios.post(`${blockEstate.nodeUrl}/api/transaction/broadcast`, {
-    amount: 6.25,
-    sender: "00",
+    commission: 6.25,
+    sender: "SYSTEM",
     recipient: nodeAddress,
   });
-
   res.status(200).json({ success: true, data: newBlock });
 };
