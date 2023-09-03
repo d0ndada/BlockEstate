@@ -331,13 +331,17 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
 // need to check against the new DELETED property addition *******
 Blockchain.prototype.GetAllSoldProperty = function () {
   const sold = [];
-  this.chain.forEach((block) => {
-    block.data.forEach((property) => {
+
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
       if (property.status === "Sold" && property.type === "AcceptBid") {
         sold.push(block);
       }
-    });
-  });
+    }
+  }
+
   return { hasBeenSold: sold.length, sold };
 };
 
