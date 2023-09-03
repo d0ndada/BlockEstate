@@ -220,18 +220,15 @@ Blockchain.prototype.findStatus = function (propertyId) {
 
         if (property.type === "AcceptBid") {
           sold++;
-          // count += sold;
           isListed = false;
         }
         if (property.type === "Listing") {
           listed++;
-          // count += listed;
 
           isListed = true;
         }
         if (property.type === "Bid") {
           bids++;
-          // count += bids;
           isListed = true;
         }
         if (property.type == "DELETE") {
@@ -321,8 +318,10 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
   const underOffer = [];
   let isSold = false;
 
-  this.chain.forEach((block) => {
-    block.data.forEach((property) => {
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
       if (
         property.propertyId === propertyId &&
         property.type === "AcceptBid" &&
@@ -330,20 +329,14 @@ Blockchain.prototype.findActiveBidsOnProperty = function (propertyId) {
       ) {
         isSold = true;
       }
-    });
-  });
-
-  if (isSold) {
-    return { propertyId };
-  }
-
-  this.chain.forEach((block) => {
-    block.data.forEach((property) => {
       if (property.propertyId === propertyId && property.type === "Bid") {
         underOffer.push(block);
       }
-    });
-  });
+    }
+  }
+  if (isSold) {
+    return { propertyId };
+  }
 
   if (underOffer.length === 0) {
     return null;
