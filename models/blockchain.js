@@ -245,18 +245,23 @@ Blockchain.prototype.canRelistProperty = function (propertyId) {
 
 // Finding transaction by transactionId as input
 Blockchain.prototype.findTransaction = function (transactionId) {
-  const block = this.chain.find((block) =>
-    block.data.find(
-      (transaction) => transaction.transactionId === transactionId
-    )
-  );
-  if (!block) {
+  const foundTransaction = [];
+  const foundBlock = [];
+
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const transaction = block.data[j];
+      if (transaction.transactionId === transactionId) {
+        foundTransaction.push(transaction);
+        foundBlock.push(block);
+      }
+    }
+  }
+  if (!foundTransaction.length > 0) {
     return null;
   } else {
-    const transaction = block.data.find(
-      (transaction) => transaction.transactionId === transactionId
-    );
-    return { transaction, block };
+    return { transaction: foundTransaction, block: foundBlock };
   }
 };
 
