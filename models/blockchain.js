@@ -394,15 +394,26 @@ Blockchain.prototype.GetActiveListings = function () {
 
   for (let i = 0; i < this.chain.length; i++) {
     const block = this.chain[i];
+    const relevantListings = [];
     for (let j = 0; j < block.data.length; j++) {
       const property = block.data[j];
       const propertyStatus = this.findStatus(property.propertyId).status;
-      if (propertyStatus === "For Sale") {
-        listings.push(property);
+      console.log(
+        `Property ID: ${property.propertyId}, Status: ${propertyStatus}`
+      );
+
+      if (
+        (propertyStatus === "For Sale" || propertyStatus === "Under Offer") &&
+        property.type === "Listing"
+      ) {
+        relevantListings.push(property);
       }
     }
+    if (relevantListings.length > 0) {
+      const cloneBlock = { ...block, data: relevantListings };
+      listings.push(cloneBlock);
+    }
   }
-  console.log(listings);
 
   return { listed: listings.length, listings };
 };
