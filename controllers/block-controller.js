@@ -13,8 +13,21 @@ exports.block = (req, res) => {
   } else {
     res.status(400).json({
       success: false,
-      errorMessage: "Blocket är inte godkänt",
+      errorMessage: "Block not approved",
       data: block,
     });
   }
+};
+
+exports.findBlock = (req, res) => {
+  const block = req.params.hash;
+  const result = blockEstate.findBlock(block);
+  if (!result) {
+    return res.status(404).json({
+      success: false,
+      errorMessage: "Block not found",
+      data: block,
+    });
+  }
+  res.status(201).json({ success: true, data: result });
 };
