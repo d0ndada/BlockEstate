@@ -442,4 +442,14 @@ Blockchain.prototype.SortDescending = function (e) {
   return descending;
 };
 
+Blockchain.prototype.findBlock = function (hash) {
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    if (block.hash === hash) {
+      return block;
+    }
+  }
+  return null;
+};
+
 module.exports = Blockchain;
