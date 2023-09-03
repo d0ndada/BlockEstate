@@ -42,5 +42,5 @@ RealEstateChain is a prototype blockchain system designed to handle property tra
 
 ### Transaction Routes
 - **POST** `/api/transaction/broadcast` - Broadcast a transaction.
-- **POST** `/api/transaction/transaction` - Create a new transaction.
+- **POST** `/api/transaction/broadcast-transaction` - Create a new transaction.
 - **GET** `/api/transaction/:id` - Retrieve a transaction by its ID.
