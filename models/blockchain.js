@@ -209,38 +209,30 @@ Blockchain.prototype.findStatus = function (propertyId) {
   let bids = 0;
   let deleted = false;
 
-  this.chain.forEach((block) => {
-    block.data.forEach((transaction) => {
-      if (transaction.propertyId === propertyId) {
-        // if (transaction.type === "AcceptBid") {
-        status = transaction.status;
-
-        // }
-      }
-    });
-  });
-
-  this.chain.forEach((block) => {
-    block.data.forEach((transaction) => {
-      if (transaction.propertyId === propertyId) {
-        if (transaction.type === "AcceptBid") {
+  for (let i = 0; i < this.chain.length; i++) {
+    const block = this.chain[i];
+    for (let j = 0; j < block.data.length; j++) {
+      const property = block.data[j];
+      if (property.propertyId === propertyId) {
+        status = property.status;
+        if (property.type === "AcceptBid") {
           sold++;
           deleted = false;
         }
-        if (transaction.type === "Listing") {
+        if (property.type === "Listing") {
           listed++;
           deleted = false;
         }
-        if (transaction.type === "Bid") {
+        if (property.type === "Bid") {
           bids++;
           deleted = false;
         }
-        if (transaction.type == "DELETE") {
+        if (property.type == "DELETE") {
           deleted = true;
         }
       }
-    });
-  });
+    }
+  }
 
   return { propertyId, status, sold, listed, bids, deleted };
 };
