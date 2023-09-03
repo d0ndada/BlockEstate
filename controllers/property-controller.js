@@ -21,15 +21,10 @@ exports.ongoingBids = (req, res) => {
     return res.status(404).json({
       status: 404,
       success: false,
-      message: `Not a property by ${req.params.id}`,
-    });
-  } else if (!result.underOffer) {
-    return res.status(404).json({
-      status: 404,
-      success: false,
-      message: `Property with id-${req.params.id} has been sold or not any bids yet. Please check status on property`,
+      message: `Not a property by ${req.params.id} or no active bids. Please check status`,
     });
   }
+
   res.status(200).json({
     success: true,
     data: result,
