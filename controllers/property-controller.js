@@ -67,7 +67,7 @@ exports.historyProperty = (req, res) => {
 //NOTE: shows all property if it has been sold can show same property id on SOLD and then on LIVE LISTING
 exports.sold = (req, res) => {
   const result = blockEstate.GetAllSoldProperty();
-  if (!result.sold) {
+  if (!result.sold || !result.hasBeenSold) {
     return res.status(404).json({
       status: 404,
       success: false,
@@ -82,13 +82,14 @@ exports.sold = (req, res) => {
 // working
 exports.recordListings = (req, res) => {
   const result = blockEstate.GetAllListings();
-  if (!result.listings) {
+  if (!result.listings || !result.listed) {
     return res.status(404).json({
       status: 404,
       success: false,
       message: `No property has been listed`,
     });
   }
+
   res.status(200).json({
     success: true,
     data: result,
@@ -97,7 +98,7 @@ exports.recordListings = (req, res) => {
 // working
 exports.activeListings = (req, res) => {
   const result = blockEstate.GetActiveListings();
-  if (!result.listings) {
+  if (!result.listings || !result.listed > 0) {
     return res.status(404).json({
       status: 404,
       success: false,
@@ -112,7 +113,7 @@ exports.activeListings = (req, res) => {
 // nworking
 exports.biddings = (req, res) => {
   const result = blockEstate.GetAllBids();
-  if (!result) {
+  if (!result || !result.bids) {
     return res.status(404).json({
       status: 404,
       success: false,
