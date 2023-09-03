@@ -207,7 +207,9 @@ Blockchain.prototype.findStatus = function (propertyId) {
   let sold = 0;
   let listed = 0;
   let bids = 0;
-  let deleted = false;
+  let deleted = 0;
+  let count = 0;
+  let isListed = false;
 
   for (let i = 0; i < this.chain.length; i++) {
     const block = this.chain[i];
@@ -215,26 +217,41 @@ Blockchain.prototype.findStatus = function (propertyId) {
       const property = block.data[j];
       if (property.propertyId === propertyId) {
         status = property.status;
+
         if (property.type === "AcceptBid") {
           sold++;
-          deleted = false;
+          // count += sold;
+          isListed = false;
         }
         if (property.type === "Listing") {
           listed++;
-          deleted = false;
+          // count += listed;
+
+          isListed = true;
         }
         if (property.type === "Bid") {
           bids++;
-          deleted = false;
+          // count += bids;
+          isListed = true;
         }
         if (property.type == "DELETE") {
-          deleted = true;
+          isListed = false;
+          deleted++;
         }
+        count = bids + sold + listed + deleted;
       }
     }
   }
 
-  return { propertyId, status, sold, listed, bids, deleted };
+  return {
+    propertyId,
+    status,
+    transactions: count,
+    sold,
+    listed,
+    bids,
+    isListed,
+  };
 };
 // Checking if a property can be relisted by looking if it is currently sold
 Blockchain.prototype.canRelistProperty = function (propertyId) {
